@@ -1,0 +1,31 @@
+<div id="tab-content-verify" class="hidden">
+    <h2 class="text-xl font-bold text-foreground mb-2">Verify & Decrypt Data</h2>
+    <p class="text-muted-foreground mb-6 text-base">
+      Verify data integrity using blockchain and decrypt your information.
+    </p>
+    <form method="post" action="/verify">
+      <div class="mb-3">
+        <label class="block text-foreground font-semibold mb-1" for="cid">IPFS Content Identifier (CID)</label>
+        <input
+          type="text"
+          id="cid"
+          name="cid"
+          placeholder="Enter the IPFS CID to verify (e.g., QmX...)"
+          class="w-full px-4 py-2 rounded-md border border-border text-base bg-background focus:ring-primary focus:border-primary outline-none transition"
+          autocomplete="off"
+          required
+        />
+      </div>
+
+      <p class="text-muted-foreground text-xs mb-6">
+        The CID is returned after encrypting data in the Register & Encrypt tab.
+      </p>
+
+      <button
+        type="submit"
+        class="w-full btn bg-primary text-primary-foreground hover:bg-primary-600 transition-colors duration-150 text-base"
+      >
+        Verify & Decrypt
+      </button>
+    </form>
+</div>

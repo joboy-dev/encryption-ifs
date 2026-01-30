@@ -1,0 +1,136 @@
+{% extends "pages/layout.html" %}
+
+{% block content %}
+<section class="flex items-center justify-center w-full">
+  <div class="bg-card w-full max-w-xl rounded-xl shadow-lg p-8 border border-border">
+    <!-- Tabs -->
+    <div class="flex mb-8 border-b border-border">
+      <button
+        id="tab-register"
+        class="flex-1 px-4 py-2 rounded-tl-lg font-medium text-sm focus:outline-none transition-colors duration-150 border border-border border-b-0 bg-white text-foreground"
+        type="button"
+        onclick="showTab('register')"
+        style="border-bottom-width: 2px;"
+      >
+        <i class="fa-solid fa-lock mr-2"></i>
+        Register & Encrypt
+      </button>
+
+      <button
+        id="tab-verify"
+        class="flex-1 px-4 py-2 font-medium text-sm focus:outline-none transition-colors duration-150 border-t border-b-0 border-r border-border bg-primary/10 text-muted-foreground"
+        type="button"
+        onclick="showTab('verify')"
+      >
+        <i class="fa-solid fa-circle-check mr-2"></i>
+        Verify & Decrypt
+      </button>
+      
+      <button
+        id="tab-get-cid"
+        class="flex-1 px-4 py-2 rounded-tr-lg rounded-br-lg font-medium text-sm focus:outline-none transition-colors duration-150 border-t border-b-0 border-r border-border bg-primary/10 text-muted-foreground"
+        type="button"
+        onclick="showTab('get-cid')"
+      >
+        <i class="fa-solid fa-magnifying-glass mr-2"></i>
+        Get CID by Email
+      </button>
+    </div>
+    
+    <!-- Register & Encrypt Form -->
+    {% include "pages/register.html" %}
+
+    <!-- Verify & Decrypt Form -->
+    {% include "pages/verify.html" %}
+
+    <!-- Get CID by Email Form -->
+    {% include "pages/get-cid.html" %}
+    
+  </div>
+  <script>
+      function showTab(tab) {
+          // Tab buttons
+          const btnRegister = document.getElementById('tab-register');
+          const btnVerify = document.getElementById('tab-verify');
+          const btnGetCid = document.getElementById('tab-get-cid');
+
+          // Tab contents
+          const contentRegister = document.getElementById('tab-content-register');
+          const contentVerify = document.getElementById('tab-content-verify');
+          const contentGetCid = document.getElementById('tab-content-get-cid');
+
+          if (tab === 'register') {
+              contentRegister.classList.remove('hidden');
+              contentRegister.classList.add('block');
+
+              contentVerify.classList.remove('block');
+              contentVerify.classList.add('hidden');
+
+              contentGetCid.classList.remove('block');
+              contentGetCid.classList.add('hidden');
+              // Activate register tab
+              btnRegister.classList.remove('bg-primary/10', 'text-muted-foreground');
+              btnRegister.classList.add('bg-white', 'text-foreground');
+              btnRegister.style.borderBottomWidth = '2px';
+
+              btnVerify.classList.remove('bg-white', 'text-foreground');
+              btnVerify.classList.add('bg-primary/10', 'text-muted-foreground');
+              btnVerify.style.borderBottomWidth = '0px';
+
+              btnGetCid.classList.remove('bg-white', 'text-foreground');
+              btnGetCid.classList.add('bg-primary/10', 'text-muted-foreground');
+              btnGetCid.style.borderBottomWidth = '0px';
+          } else if (tab === 'verify') {
+              contentVerify.classList.remove('hidden');
+              contentVerify.classList.add('block');
+
+              contentRegister.classList.remove('block');
+              contentRegister.classList.add('hidden');
+
+              contentGetCid.classList.remove('block');
+              contentGetCid.classList.add('hidden');
+              // Activate verify tab
+              btnVerify.classList.remove('bg-primary/10', 'text-muted-foreground');
+              btnVerify.classList.add('bg-white', 'text-foreground');
+              btnVerify.style.borderBottomWidth = '2px';
+
+              btnRegister.classList.remove('bg-white', 'text-foreground');
+              btnRegister.classList.add('bg-primary/10', 'text-muted-foreground');
+              btnRegister.style.borderBottomWidth = '0px';
+
+              btnGetCid.classList.remove('bg-white', 'text-foreground');
+              btnGetCid.classList.add('bg-primary/10', 'text-muted-foreground');
+              btnGetCid.style.borderBottomWidth = '0px';
+          } else if (tab === 'get-cid') {
+              contentGetCid.classList.remove('hidden');
+              contentGetCid.classList.add('block');
+
+              contentRegister.classList.remove('block');
+              contentRegister.classList.add('hidden');
+
+              contentVerify.classList.remove('block');
+              contentVerify.classList.add('hidden');
+              // Activate get-cid tab
+              btnGetCid.classList.remove('bg-primary/10', 'text-muted-foreground');
+              btnGetCid.classList.add('bg-white', 'text-foreground');
+              btnGetCid.style.borderBottomWidth = '2px';
+
+              btnRegister.classList.remove('bg-white', 'text-foreground');
+              btnRegister.classList.add('bg-primary/10', 'text-muted-foreground');
+              btnRegister.style.borderBottomWidth = '0px';
+
+              btnVerify.classList.remove('bg-white', 'text-foreground');
+              btnVerify.classList.add('bg-primary/10', 'text-muted-foreground');
+              btnVerify.style.borderBottomWidth = '0px';
+          }
+      }
+
+      // Set default tab on page load
+      document.addEventListener('DOMContentLoaded', function() {
+          showTab('register');
+      });
+  </script>
+</section>
+
+
+{% endblock %}

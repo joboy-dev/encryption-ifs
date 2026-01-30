@@ -1,0 +1,54 @@
+<div id="tab-content-register" class="block">
+    <h2 class="text-xl font-bold text-foreground mb-1">Register & Encrypt Data</h2>
+    <p class="text-muted-foreground mb-6 text-base">
+        Enter your information to encrypt and store it securely on IPFS with blockchain verification.
+    </p>
+
+    <form method="post" action="/encrypt">
+        <div class="mb-4">
+            <label class="block text-foreground font-semibold mb-1" for="email">Email Address</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                class="w-full px-4 py-2 rounded-md border border-border text-base bg-background focus:ring-primary focus:border-primary outline-none transition"
+                autocomplete="email"
+                required
+            />
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-foreground font-semibold mb-1" for="full_name">Full Name</label>
+            <input
+                type="text"
+                id="full_name"
+                name="full_name"
+                placeholder="Enter your full name"
+                class="w-full px-4 py-2 rounded-md border border-border text-base bg-background focus:ring-primary focus:border-primary outline-none transition"
+                autocomplete="name"
+                required
+            />
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-foreground font-semibold mb-1" for="id_number">ID Number</label>
+            <input
+                type="text"
+                id="id_number"
+                name="id_number"
+                placeholder="Enter your ID number"
+                class="w-full px-4 py-2 rounded-md border border-border text-base bg-background focus:ring-primary focus:border-primary outline-none transition"
+                autocomplete="off"
+                required
+            />
+        </div>
+        
+        <button
+            type="submit"
+            class="w-full btn bg-primary text-primary-foreground hover:bg-primary-600 transition-colors duration-150 text-base"
+        >
+            Register & Encrypt
+        </button>
+    </form>
+</div>

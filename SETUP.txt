@@ -1,0 +1,17 @@
+MAC
+- Download IPFS using:
+    brew install ipfs
+- Run:
+    ipfs init
+- Run:
+    ipfs daemon
+
+Installation Resources
+https://docs.ipfs.tech/install/ipfs-desktop/#windows
+https://docs.ipfs.tech/install/ipfs-desktop/#macos
+https://docs.ipfs.tech/install/ipfs-desktop/#ubuntu
+
+https://github.com/ipfs/ipfs-desktop/releases
+
+
+https://dist.ipfs.tech/kubo/v0.24.0/

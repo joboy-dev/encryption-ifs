@@ -1,0 +1,46 @@
+<style>
+  .flash-message {
+    box-shadow: 0 6px 24px 0 rgba(0,0,0,0.09), 0 1.5px 6px 0 rgba(0,0,0,0.07);
+    animation: fade-in-down 0.3s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes fade-in-down {
+    0% {
+      opacity: 0;
+      transform: translateY(-16px) scale(0.98);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+</style>
+
+<div class="fixed z-50 right-8 top-8 flex flex-col gap-2 items-end pointer-events-none" id="flash-messages-container">
+  {% for message in get_flashed_messages(request) %}
+    <div class="flash-message flex items-center gap-3 min-w-[320px] max-w-[400px] px-5 py-3 rounded-lg border border-accent-{{ message.category }}-400 bg-white/80 shadow-lg transition-all font-medium text-sm text-accent-{{ message.category }}-700 pointer-events-auto"
+         style="backdrop-filter: blur(4px);">
+      <span class="text-xl flex-shrink-0">
+        {% if message.category == 'success' %}
+          <i class="fa-solid fa-circle-check text-accent-{{ message.category }}-500"></i>
+        {% elif message.category == 'error' %}
+          <i class="fa-solid fa-circle-xmark text-accent-{{ message.category }}-500"></i>
+        {% else %}
+          <i class="fa-solid fa-circle-info text-accent-{{ message.category }}-500"></i>
+        {% endif %}
+      </span>
+      <span>{{ message.message }}</span>
+      <button type="button" class="ml-auto px-1 text-accent-{{ message.category }}-400 hover:text-accent-{{ message.category }}-600 focus:outline-none" aria-label="Close" onclick="this.parentElement.remove()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  {% endfor %}
+</div>
+<script>
+  // Automatically fade and remove flash after 5s
+  setTimeout(() => {
+    document.querySelectorAll('.flash-message').forEach(msg => {
+      msg.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => msg.remove(), 300);
+    });
+  }, 5000);
+</script>
