@@ -2,7 +2,7 @@ import hashlib
 import json
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
-import ipfshttpclient, ipfsapi
+import ipfshttpclient
 from sqlalchemy.orm import Session
 from api.core.dependencies.context import add_template_context
 from api.db.database import get_db, get_db_with_ctx_manager
