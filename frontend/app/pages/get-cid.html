@@ -3,7 +3,21 @@
     <p class="text-muted-foreground mb-6 text-base">
       Get your CID by providing your email.
     </p>
-    <form method="post" action="/get-cid">
+
+    <div id="get-cid-result" class="hidden mb-6 border-l-4 border-green-500 bg-green-50 rounded-md px-4 py-3 shadow transition-all">
+      <div class="flex items-center space-x-3">
+        <i class="fa-solid fa-circle-check text-green-500 text-xl"></i>
+        <div>
+          <div class="font-semibold text-green-700 text-base">Your IPFS CID</div>
+          <div class="text-green-700 mt-1 break-all">
+            <span class="font-medium">CID:&nbsp;</span>
+            <span id="get-cid-value" class="font-mono"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form id="form-get-cid" method="post" action="/get-cid">
       <div class="mb-3">
         <label class="block text-foreground font-semibold mb-1" for="email">Email Address</label>
         <input

@@ -25,7 +25,7 @@
         <i class="fa-solid fa-circle-check mr-2"></i>
         Verify & Decrypt
       </button>
-      
+
       <button
         id="tab-get-cid"
         class="flex-1 px-4 py-2 rounded-tr-lg rounded-br-lg font-medium text-sm focus:outline-none transition-colors duration-150 border-t border-b-0 border-r border-border bg-primary/10 text-muted-foreground"
@@ -128,7 +128,79 @@
       // Set default tab on page load
       document.addEventListener('DOMContentLoaded', function() {
           showTab('register');
+          initAjaxForms();
       });
+
+      function initAjaxForms() {
+        const formConfigs = [
+          {
+            form: document.getElementById('form-register'),
+            action: '/encrypt',
+            cidResult: document.getElementById('register-cid-result'),
+            cidValue: document.getElementById('register-cid-value')
+          },
+          {
+            form: document.getElementById('form-verify'),
+            action: '/verify',
+            cidResult: null,
+            cidValue: null
+          },
+          {
+            form: document.getElementById('form-get-cid'),
+            action: '/get-cid',
+            cidResult: document.getElementById('get-cid-result'),
+            cidValue: document.getElementById('get-cid-value')
+          }
+        ];
+
+        formConfigs.forEach(function(config) {
+          if (!config.form) return;
+          config.form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = config.form;
+            const formData = new FormData(form);
+            const btn = form.querySelector('button[type="submit"]');
+            const originalText = btn ? btn.innerHTML : '';
+
+            if (btn) {
+              btn.disabled = true;
+              btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Processing...';
+            }
+
+            fetch(config.action, {
+              method: 'POST',
+              body: formData,
+              headers: {
+                'Accept': 'application/json'
+              }
+            })
+              .then(function(r) { return r.json().then(function(data) { return { ok: r.ok, status: r.status, data: data }; }); })
+              .then(function(result) {
+                const data = result.data;
+                const category = data.success ? 'success' : 'error';
+                const message = data.message || data.detail || (data.success ? 'Done' : 'Error');
+                if (typeof showFlashMessage === 'function') {
+                  showFlashMessage(message, category);
+                }
+                if (config.cidResult && config.cidValue && data.cid) {
+                  config.cidValue.textContent = data.cid;
+                  config.cidResult.classList.remove('hidden');
+                }
+              })
+              .catch(function() {
+                if (typeof showFlashMessage === 'function') {
+                  showFlashMessage('An unexpected error occurred', 'error');
+                }
+              })
+              .finally(function() {
+                if (btn) {
+                  btn.disabled = false;
+                  btn.innerHTML = originalText;
+                }
+              });
+          });
+        });
+      }
   </script>
 </section>
 

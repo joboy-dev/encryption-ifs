@@ -2,7 +2,7 @@ import hashlib
 import json
 import libipld
 from fastapi import APIRouter, Depends, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse
 import ipfshttpclient
 from sqlalchemy.orm import Session
 from api.core.dependencies.context import add_template_context
@@ -10,7 +10,6 @@ from api.db.database import get_db, get_db_with_ctx_manager
 from api.utils.loggers import create_logger, log_error
 from api.v1.models.user import User
 from api.v1.services.nimc import NIMCService
-from api.core.dependencies.flash_messages import MessageCategory, flash
 
 
 index_router = APIRouter(tags=["External"])
@@ -58,8 +57,10 @@ async def encrypt(
         )
         
         if record:
-            flash(request, "Record with this email already exists", MessageCategory.ERROR)
-            return RedirectResponse(url="/", status_code=303)
+            return JSONResponse(
+                status_code=400,
+                content={"success": False, "message": "Record with this email already exists"}
+            )
         
         encrypted = NIMCService.encrypt(payload.__dict__)
 
@@ -89,16 +90,18 @@ async def encrypt(
             "cid": cid,
             "hash": data_hash
         })
-        
-        setattr(request.state, 'cid', cid)
-        
-        flash(request, 'Encryption complete', MessageCategory.SUCCESS)    
+
+        return JSONResponse(
+            status_code=200,
+            content={"success": True, "message": "Encryption complete", "cid": cid}
+        )
     
     except Exception as e:
         log_error(logger, e, "An error occurred during encryption")
-        flash(request, 'Encryption failed', MessageCategory.ERROR)    
-                
-    return RedirectResponse(url="/", status_code=303)
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "message": "Encryption failed"}
+        )
     
 
 @index_router.post("/verify")
@@ -111,6 +114,7 @@ async def verify(
     try:
         client = ipfshttpclient.connect()
         encrypted = client.get_json(payload.get('cid'))
+        print('encrypted', encrypted)
 
         recalculated_hash = hashlib.sha256(
             json.dumps(encrypted).encode()
@@ -122,15 +126,19 @@ async def verify(
         #     raise HTTPException(400, "Data integrity compromised")
 
         decrypted = NIMCService.decrypt(encrypted)
-        print(decrypted)
+        print('decrypted', decrypted)
 
-        flash(request, 'Verification complete', MessageCategory.SUCCESS)    
+        return JSONResponse(
+            status_code=200,
+            content={"success": True, "message": "Verification complete"}
+        )
                
     except Exception as e:
-        log_error(logger, e, "An error occurred during encryption")
-        flash(request, 'Verification failed', MessageCategory.ERROR)  
-    
-    return RedirectResponse(url="/", status_code=303)
+        log_error(logger, e, "An error occurred during verification")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "message": "Verification failed"}
+        )
 
 
 @index_router.post("/get-cid")
@@ -145,14 +153,16 @@ async def fetch_cid(
             db=db, error_message="Record with this email does not exist",
             email=payload.get('email')
         )
-        
-        flash(request, 'Fetch complete', MessageCategory.SUCCESS)   
-        
-        setattr(request.state, 'cid', user.cid)
+
+        return JSONResponse(
+            status_code=200,
+            content={"success": True, "message": "Fetch complete", "cid": user.cid}
+        )
           
     except Exception as e:
-        log_error(logger, e, "An error occurred during encryption")
-        flash(request, 'Fetching failed', MessageCategory.ERROR)  
-    
-    return RedirectResponse(url="/", status_code=303)
+        log_error(logger, e, "An error occurred during fetch")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "message": "Fetching failed"}
+        )
     

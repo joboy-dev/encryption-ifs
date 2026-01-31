@@ -36,7 +36,35 @@
   {% endfor %}
 </div>
 <script>
-  // Automatically fade and remove flash after 5s
+  window.showFlashMessage = function(message, category) {
+    category = category || 'info';
+    const classMap = {
+      success: { border: 'border-accent-success-400', text: 'text-accent-success-700', icon: 'text-accent-success-500', btn: 'text-accent-success-400 hover:text-accent-success-600' },
+      error: { border: 'border-accent-error-400', text: 'text-accent-error-700', icon: 'text-accent-error-500', btn: 'text-accent-error-400 hover:text-accent-error-600' },
+      info: { border: 'border-accent-info-400', text: 'text-accent-info-700', icon: 'text-accent-info-500', btn: 'text-accent-info-400 hover:text-accent-info-600' }
+    };
+    const c = classMap[category] || classMap.info;
+    const iconClass = category === 'success' ? 'fa-circle-check' : category === 'error' ? 'fa-circle-xmark' : 'fa-circle-info';
+    const div = document.createElement('div');
+    div.className = 'flash-message flex items-center gap-3 min-w-[320px] max-w-[400px] px-5 py-3 rounded-lg border ' + c.border + ' bg-white/80 shadow-lg transition-all font-medium text-sm ' + c.text + ' pointer-events-auto';
+    div.style.backdropFilter = 'blur(4px)';
+    div.innerHTML = `
+      <span class="text-xl flex-shrink-0">
+        <i class="fa-solid ${iconClass} ${c.icon}"></i>
+      </span>
+      <span class="flash-msg-text"></span>
+      <button type="button" class="ml-auto px-1 ${c.btn} focus:outline-none" aria-label="Close" onclick="this.parentElement.remove()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    `;
+    div.querySelector('.flash-msg-text').textContent = message;
+    const container = document.getElementById('flash-messages-container');
+    if (container) container.appendChild(div);
+    setTimeout(() => {
+      div.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => div.remove(), 300);
+    }, 5000);
+  };
   setTimeout(() => {
     document.querySelectorAll('.flash-message').forEach(msg => {
       msg.classList.add('opacity-0', 'translate-y-2');
