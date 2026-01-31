@@ -1,5 +1,6 @@
 import hashlib
 import json
+import libipld
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 import ipfshttpclient
@@ -65,6 +66,10 @@ async def encrypt(
 
         encrypted_bytes = json.dumps(encrypted).encode()
         data_hash = hashlib.sha256(encrypted_bytes).hexdigest()
+        
+        # Extract CID
+        # cid = libipld.encode_cid(data=json.dumps(encrypted))
+        # print(cid)
 
         # Upload to IPFS
         client = ipfshttpclient.connect()
