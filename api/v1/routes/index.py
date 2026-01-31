@@ -44,7 +44,6 @@ async def index(request: Request) -> dict:
         "benefits": benefits
     }
 
-
 @index_router.post("/encrypt")
 async def encrypt(
     request: Request, 
@@ -91,7 +90,8 @@ async def encrypt(
             "hash": data_hash
         })
         
-        request.state['cid'] = cid
+        # Fix: use setattr to store cid in request.state, which is a proper way for FastAPI Starlette's state object
+        setattr(request.state, 'cid', cid)
         
         flash(request, 'Encryption complete', MessageCategory.SUCCESS)    
     
