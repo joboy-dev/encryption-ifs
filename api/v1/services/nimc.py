@@ -36,11 +36,35 @@ class NIMCService:
                 )
             )
         return key
+    
+    
+    @classmethod
+    def _derive_aes_key(cls) -> bytes:
+        """
+        Derive a stable 32-byte AES key from the ECC private key.
+        """
+        private_key = cls._get_key()
+        public_key = private_key.public_key()
+
+        shared_key = private_key.exchange(
+            ec.ECDH(),
+            public_key
+        )
+
+        aes_key = HKDF(
+            algorithm=hashes.SHA256(),
+            length=32,                # 256-bit AES key
+            salt=b"nimc-static-salt", # MUST stay constant
+            info=b"nimc-identity-demo",
+            backend=default_backend()
+        ).derive(shared_key)
+
+        return aes_key
 
 
     @classmethod
     def encrypt(cls, data: dict):
-        key = cls._get_key()
+        key = cls._derive_aes_key()
         iv = os.urandom(12)
 
         encryptor = Cipher(
@@ -61,7 +85,7 @@ class NIMCService:
 
     @classmethod
     def decrypt(cls, enc: dict):
-        key = cls._get_key()
+        key = cls._derive_aes_key()
 
         decryptor = Cipher(
             algorithms.AES(key),
