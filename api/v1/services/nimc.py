@@ -32,7 +32,7 @@ class NIMCService:
         derived_key = HKDF(
             algorithm=hashes.SHA256(),
             length=32,
-            salt=None,
+            salt=b"static-salt",
             info=b'identity-demo',
             backend=default_backend()
         ).derive(shared_key)
@@ -61,7 +61,7 @@ class NIMCService:
         derived_key = HKDF(
             algorithm=hashes.SHA256(),
             length=32,
-            salt=None,
+            salt=b"static-salt",
             info=b'identity-demo',
             backend=default_backend()
         ).derive(shared_key)
@@ -77,8 +77,3 @@ class NIMCService:
 
         plaintext = decryptor.update(b64decode(enc["ciphertext"])) + decryptor.finalize()
         return json.loads(plaintext)
-    
-
-    @classmethod
-    def verify(cls):
-        pass
