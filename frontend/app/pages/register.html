@@ -4,6 +4,22 @@
         Enter your information to encrypt and store it securely on IPFS with blockchain verification.
     </p>
 
+    {# Display CID if it exists in request.state #}
+    {% if request.state.cid %}
+      <div class="mb-6 border-l-4 border-green-500 bg-green-50 rounded-md px-4 py-3 shadow transition-all">
+        <div class="flex items-center space-x-3">
+          <i class="fa-solid fa-circle-check text-green-500 text-xl"></i>
+          <div>
+            <div class="font-semibold text-green-700 text-base">Registered successfully!</div>
+            <div class="text-green-700 mt-1 break-all">
+              <span class="font-medium">Your IPFS CID:&nbsp;</span>
+              <span class="font-mono">{{ request.state.cid }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
     <form method="post" action="/encrypt">
         <div class="mb-4">
             <label class="block text-foreground font-semibold mb-1" for="email">Email Address</label>

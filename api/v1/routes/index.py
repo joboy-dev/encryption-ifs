@@ -66,71 +66,32 @@ async def encrypt(
 
         encrypted_bytes = json.dumps(encrypted).encode()
         data_hash = hashlib.sha256(encrypted_bytes).hexdigest()
-        
-        # Extract CID
-        # cid = libipld.encode_cid(data=json.dumps(encrypted))
-        # print(cid)
 
         # Upload to IPFS
         client = ipfshttpclient.connect()
         res = client.add_json(encrypted)
         cid = res
         print(cid)
-        
-        
-        # Commented out ipfsapi code due to errors:
-        # client = ipfsapi.connect(
-        #     host='127.0.0.1',
-        #     port=5001
-        # )
-        # res = client.add_json(encrypted)
-        # cid = res
-
-        # import requests
-
-        # # Test connection to IPFS HTTP API using requests (GET method, but can POST if required)
-        # ipfs_api_url = "http://localhost:5001/api/v0/version?stream-channels=true"
-
-        # try:
-        #     response = requests.post(ipfs_api_url)
-        #     print("IPFS POST /api/v0/version?stream-channels=true response:", response.text)
-        # except Exception as e:
-        #     print("Failed to reach IPFS API:", str(e))
-
-        # TODO: Storing encrypted data to IPFS via HTTP API,
-        # see: https://docs.ipfs.tech/reference/kubo/api/#apiv0add for details.
-        # You'd typically need to use the `/api/v0/add` endpoint
-        # and send the file contents as form data (multipart/form-data).
-
-        # Example (sketched; see docs for real implementation):
-        # files = {'file': json.dumps(encrypted).encode()}
-        # add_url = "http://localhost:5001/api/v0/add"
-        # add_resp = requests.post(add_url, files=files)
-        # print("IPFS add response:", add_resp.text)
-        # ipfs_response = add_resp.json() # or parse add_resp.text for 'Hash'/CID
-        # cid = ipfs_response.get('Hash', None)
-        # cid = None  # Placeholder until real implementation
-        # print(cid)
     
         # Blockchain
         # blockchain_tx = record_on_blockchain(user.id_number, data_hash, cid)
         blockchain_tx = None
 
         # MongoDB
-        # User.create(
-        #     db=db,
-        #     email=payload.get('email'),
-        #     cid=cid,
-        #     hash=data_hash,
-        #     blockchain_tx=blockchain_tx
-        # )
+        User.create(
+            db=db,
+            email=payload.get('email'),
+            cid=cid,
+            hash=data_hash,
+            blockchain_tx=blockchain_tx
+        )
 
-        # print({
-        #     "cid": cid,
-        #     "hash": data_hash
-        # })
+        print({
+            "cid": cid,
+            "hash": data_hash
+        })
         
-        # request.state['cid'] = cid
+        request.state['cid'] = cid
         
         flash(request, 'Encryption complete', MessageCategory.SUCCESS)    
     
