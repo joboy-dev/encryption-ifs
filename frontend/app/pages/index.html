@@ -142,8 +142,10 @@
           {
             form: document.getElementById('form-verify'),
             action: '/verify',
-            cidResult: null,
-            cidValue: null
+            verifyResult: document.getElementById('verify-decrypted-result'),
+            verifyEmail: document.getElementById('verify-decrypted-email'),
+            verifyFullName: document.getElementById('verify-decrypted-full_name'),
+            verifyIdNumber: document.getElementById('verify-decrypted-id_number')
           },
           {
             form: document.getElementById('form-get-cid'),
@@ -185,6 +187,14 @@
                 if (config.cidResult && config.cidValue && data.cid) {
                   config.cidValue.textContent = data.cid;
                   config.cidResult.classList.remove('hidden');
+                }
+                if (config.verifyResult && data.decrypted_data) {
+                  if (config.verifyEmail) config.verifyEmail.textContent = data.decrypted_data.email || '—';
+                  if (config.verifyFullName) config.verifyFullName.textContent = data.decrypted_data.full_name || '—';
+                  if (config.verifyIdNumber) config.verifyIdNumber.textContent = data.decrypted_data.id_number || '—';
+                  config.verifyResult.classList.remove('hidden');
+                } else if (config.verifyResult && !data.success) {
+                  config.verifyResult.classList.add('hidden');
                 }
               })
               .catch(function() {

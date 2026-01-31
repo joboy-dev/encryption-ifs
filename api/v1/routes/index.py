@@ -127,10 +127,16 @@ async def verify(
 
         decrypted = NIMCService.decrypt(encrypted)
         print('decrypted', decrypted)
+        
+        decrypted_data = decrypted.get('_dict')  # stores email, full_name, id_number
 
         return JSONResponse(
             status_code=200,
-            content={"success": True, "message": "Verification complete"}
+            content={
+                "success": True, 
+                "message": "Verification complete",
+                "decrypted_data": decrypted_data
+            }
         )
                
     except Exception as e:

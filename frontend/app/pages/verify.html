@@ -3,6 +3,19 @@
     <p class="text-muted-foreground mb-6 text-base">
       Verify data integrity using blockchain and decrypt your information.
     </p>
+
+    <div id="verify-decrypted-result" class="hidden mb-6 border-l-4 border-green-500 bg-green-50 rounded-md px-4 py-3 shadow transition-all">
+      <div class="flex items-center space-x-3 mb-3">
+        <i class="fa-solid fa-circle-check text-green-500 text-xl"></i>
+        <div class="font-semibold text-green-700 text-base">Verification complete – decrypted data:</div>
+      </div>
+      <dl class="text-green-700 space-y-1.5 text-sm">
+        <div><dt class="font-medium inline">Email: </dt><dd id="verify-decrypted-email" class="inline font-mono"></dd></div>
+        <div><dt class="font-medium inline">Full name: </dt><dd id="verify-decrypted-full_name" class="inline font-mono"></dd></div>
+        <div><dt class="font-medium inline">ID number: </dt><dd id="verify-decrypted-id_number" class="inline font-mono"></dd></div>
+      </dl>
+    </div>
+
     <form id="form-verify" method="post" action="/verify">
       <div class="mb-3">
         <label class="block text-foreground font-semibold mb-1" for="cid">IPFS Content Identifier (CID)</label>
