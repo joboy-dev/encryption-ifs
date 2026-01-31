@@ -90,7 +90,6 @@ async def encrypt(
             "hash": data_hash
         })
         
-        # Fix: use setattr to store cid in request.state, which is a proper way for FastAPI Starlette's state object
         setattr(request.state, 'cid', cid)
         
         flash(request, 'Encryption complete', MessageCategory.SUCCESS)    
@@ -149,7 +148,7 @@ async def fetch_cid(
         
         flash(request, 'Fetch complete', MessageCategory.SUCCESS)   
         
-        request.state['cid'] = user.cid 
+        setattr(request.state, 'cid', user.cid)
           
     except Exception as e:
         log_error(logger, e, "An error occurred during encryption")
