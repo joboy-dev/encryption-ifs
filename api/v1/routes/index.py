@@ -10,13 +10,13 @@ from api.db.database import get_db, get_db_with_ctx_manager
 from api.utils.loggers import create_logger, log_error
 from api.v1.models.user import User
 from api.v1.services.nimc import NIMCService
-from main import ipfs_client
+from check_ipfs import check_ipfs
 
 
 index_router = APIRouter(tags=["External"])
 logger = create_logger(__name__)
 
-client = ipfs_client
+client = check_ipfs()
 
 @index_router.get("/")
 @add_template_context('pages/index.html')

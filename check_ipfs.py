@@ -1,5 +1,9 @@
 import ipfshttpclient
 
+_client = None
+
 def check_ipfs():
-    client = ipfshttpclient.connect()
-    return client
+    global _client
+    if _client is None:
+        _client = ipfshttpclient.connect()
+    return _client
