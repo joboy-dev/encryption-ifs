@@ -73,7 +73,7 @@ class NIMCService:
             backend=default_backend()
         ).encryptor()
 
-        plaintext = json.dumps(data).encode()
+        plaintext = json.dumps(data, sort_keys=True).encode()
         ciphertext = encryptor.update(plaintext) + encryptor.finalize()
 
         return {

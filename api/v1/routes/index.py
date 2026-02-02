@@ -64,7 +64,7 @@ async def encrypt(
         
         encrypted = NIMCService.encrypt(payload.__dict__)
 
-        encrypted_bytes = json.dumps(encrypted).encode()
+        encrypted_bytes = json.dumps(encrypted, sort_keys=True).encode()
         data_hash = hashlib.sha256(encrypted_bytes).hexdigest()
 
         # Upload to IPFS
@@ -117,7 +117,7 @@ async def verify(
         print('encrypted', encrypted)
 
         recalculated_hash = hashlib.sha256(
-            json.dumps(encrypted).encode()
+            json.dumps(encrypted, sort_keys=True).encode()
         ).hexdigest()
 
         # chain_data = get_blockchain_record(data.user_id)
