@@ -10,10 +10,13 @@ from api.db.database import get_db, get_db_with_ctx_manager
 from api.utils.loggers import create_logger, log_error
 from api.v1.models.user import User
 from api.v1.services.nimc import NIMCService
+from main import ipfs_client
 
 
 index_router = APIRouter(tags=["External"])
 logger = create_logger(__name__)
+
+client = ipfs_client
 
 @index_router.get("/")
 @add_template_context('pages/index.html')
@@ -68,7 +71,7 @@ async def encrypt(
         data_hash = hashlib.sha256(encrypted_bytes).hexdigest()
 
         # Upload to IPFS
-        client = ipfshttpclient.connect()
+        # client = ipfshttpclient.connect()
         res = client.add_json(encrypted)
         cid = res
         print(cid)
@@ -112,7 +115,7 @@ async def verify(
     payload = await request.form()
     
     try:
-        client = ipfshttpclient.connect()
+        # client = ipfshttpclient.connect()
         encrypted = client.get_json(payload.get('cid'))
         print('encrypted', encrypted)
 

@@ -24,6 +24,7 @@ from api.utils.log_streamer import log_streamer
 from api.utils.port_checker import find_free_port
 from api.v1.routes import v1_router
 from api.utils.settings import settings
+from check_ipfs import check_ipfs
 
 
 os.makedirs("./logs", exist_ok=True)
@@ -36,6 +37,14 @@ logger = create_logger(__name__, log_file='logs/error.log')
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     yield
+
+# Check if IPFS is running
+ipfs_client = check_ipfs()
+if ipfs_client is None:
+    logger.error("IPFS is not running")
+    raise Exception("IPFS is not running")
+else:
+    logger.info("IPFS is running")
 
 app = FastAPI(
     lifespan=lifespan,
