@@ -1,7 +1,7 @@
 import hashlib
 import json
 import libipld
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 import ipfshttpclient
 from sqlalchemy.orm import Session
@@ -99,6 +99,12 @@ async def encrypt(
             content={"success": True, "message": "Encryption complete", "cid": cid}
         )
     
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"success": False, "message": e.detail}
+        )
+    
     except Exception as e:
         log_error(logger, e, "An error occurred during encryption")
         return JSONResponse(
@@ -141,6 +147,12 @@ async def verify(
                 "decrypted_data": decrypted_data
             }
         )
+    
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"success": False, "message": e.detail}
+        )
                
     except Exception as e:
         log_error(logger, e, "An error occurred during verification")
@@ -166,6 +178,12 @@ async def fetch_cid(
         return JSONResponse(
             status_code=200,
             content={"success": True, "message": "Fetch complete", "cid": user.cid}
+        )
+    
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"success": False, "message": e.detail}
         )
           
     except Exception as e:
