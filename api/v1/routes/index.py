@@ -67,7 +67,6 @@ async def encrypt(
             email=payload.get('email'),
             cid=cid,
             hash=data_hash,
-            blockchain_tx=None
         )
         
         # Blockchain
