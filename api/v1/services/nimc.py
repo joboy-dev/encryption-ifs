@@ -161,7 +161,7 @@ class NIMCService:
             
             command = [
                 f"{FABRIC_SAMPLES_PATH}/bin/peer", "chaincode", "invoke",
-                "-C", "mychannel", "-n", "basic",
+                "-C", "mychannel1", "-n", "basic",
                 "--peerAddresses", "localhost:7051",
                 "--tlsRootCertFiles", f"{FABRIC_PATH}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
                 "-c", json.dumps({"Args": ["CreateAsset", user_id, data_hash, cid]})
@@ -194,7 +194,7 @@ class NIMCService:
         try:
             command = [
                 f"{FABRIC_PATH}/bin/peer", "chaincode", "query",
-                "-C", "mychannel", "-n", "basic",
+                "-C", "mychannel1", "-n", "basic",
                 "-c", json.dumps({"Args": ["GetAsset", user_id]})
             ]
             result = subprocess.run(command, capture_output=True, text=True, timeout=30)
