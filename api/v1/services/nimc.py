@@ -4,8 +4,9 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 import os
-import json
+import json, subprocess
 from base64 import b64encode, b64decode
+from decouple import config
 
 # -------------------------
 # ECC KEY PAIR (PoC ONLY)
@@ -14,6 +15,9 @@ from base64 import b64encode, b64decode
 # public_key = private_key.public_key()
 
 KEY_FILE = "ecc_private.pem"
+
+# Configuration for your test-network
+FABRIC_PATH = config("FABRIC_PATH", default="/path/to/fabric-samples/test-network")  # Update this path
 
 
 class NIMCService:
@@ -101,3 +105,51 @@ class NIMCService:
         ) + decryptor.finalize()
         
         return json.loads(plaintext)
+    
+    @classmethod
+    def record_on_blockchain(cls, user_id: str, hash: str, cid: str):
+        """
+        Invokes the chaincode to store the record.
+        Using peer CLI for the test-network is often the most reliable 
+        way to bypass deprecated Python SDK issues.
+        Returns the blockchain transaction ID.
+        """
+        try:
+            command = [
+                f"{FABRIC_PATH}/bin/peer", "chaincode", "invoke",
+                "-C", "mychannel", "-n", "basic",
+                "-c", json.dumps({"Args": ["CreateAsset", user_id, hash, cid]})
+            ]
+            result = subprocess.run(command, capture_output=True, text=True, timeout=30)
+            if result.returncode == 0:
+                return {"status": "success", "message": "Record stored on blockchain"}
+            else:
+                print(f"Blockchain Error: {result.stderr}")
+                return None
+        except Exception as e:
+            print(f"Blockchain Error: {e}")
+            return None
+
+    
+    @classmethod
+    def get_blockchain_record(cls, user_id: str):
+        """
+        Queries the ledger to get the original hash for comparison.
+        """
+        try:
+            command = [
+                f"{FABRIC_PATH}/bin/peer", "chaincode", "query",
+                "-C", "mychannel", "-n", "basic",
+                "-c", json.dumps({"Args": ["GetAsset", user_id]})
+            ]
+            result = subprocess.run(command, capture_output=True, text=True, timeout=30)
+            if result.returncode == 0:
+                output = json.loads(result.stdout)
+                print(output)
+                return output
+            else:
+                print(f"Query Error: {result.stderr}")
+                return None
+        except Exception as e:
+            print(f"Query Error: {e}")
+            return None

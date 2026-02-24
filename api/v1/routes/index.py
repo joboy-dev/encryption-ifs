@@ -61,19 +61,23 @@ async def encrypt(
         cid = res
         print(cid)
     
-        # Blockchain
-        # blockchain_tx = record_on_blockchain(user.id_number, data_hash, cid)
-        blockchain_tx = None
-
         # MongoDB
-        User.create(
+        user = User.create(
             db=db,
             email=payload.get('email'),
             cid=cid,
             hash=data_hash,
-            blockchain_tx=blockchain_tx
+            blockchain_tx=None
         )
-
+        
+        # Blockchain
+        blockchain_res = NIMCService.record_on_blockchain(user.id, data_hash, cid)
+        
+        if blockchain_res and blockchain_res.get("status") == "success":
+            pass
+        else:
+            logger.warning(f"Blockchain recording failed for user {user.id}")
+            
         print({
             "cid": cid,
             "hash": data_hash
@@ -113,11 +117,16 @@ async def verify(
         recalculated_hash = hashlib.sha256(
             json.dumps(encrypted, sort_keys=True).encode()
         ).hexdigest()
+        
+        user = User.fetch_one_by_field(
+            db=db, error_message="Record with this cid does not exist",
+            cid=payload.get('cid')
+        )
 
-        # chain_data = get_blockchain_record(data.user_id)
+        chain_data = NIMCService.get_blockchain_record(user.id)
 
-        # if recalculated_hash != chain_data["hash"]:
-        #     raise HTTPException(400, "Data integrity compromised")
+        if recalculated_hash != chain_data[0].get("hash"):
+            raise HTTPException(400, "Data integrity compromised")
 
         decrypted = NIMCService.decrypt(encrypted)
         print('decrypted', decrypted)

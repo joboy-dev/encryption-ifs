@@ -12,6 +12,6 @@ class User(BaseTableModel):
     email = sa.Column(sa.String, nullable=False, unique=True, index=True)
     cid = sa.Column(sa.Text, nullable=True)
     hash = sa.Column(sa.Text, nullable=True)
-    blockchain_tx = sa.Column(sa.Text, nullable=True)
+    # blockchain_tx = sa.Column(sa.Text, nullable=True)
     # full_name = sa.Column(sa.String, nullable=True, unique=True, index=True)
     # nin = sa.Column(sa.String, nullable=True, unique=True, index=True)
