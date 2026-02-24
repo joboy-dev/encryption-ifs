@@ -8,8 +8,6 @@ import json, subprocess
 from base64 import b64encode, b64decode
 from decouple import config
 
-from alembic import env
-
 # -------------------------
 # ECC KEY PAIR (PoC ONLY)
 # -------------------------
