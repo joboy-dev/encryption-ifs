@@ -17,7 +17,8 @@ from decouple import config
 KEY_FILE = "ecc_private.pem"
 
 # Configuration for your test-network
-FABRIC_PATH = config("FABRIC_PATH", default="/path/to/fabric-samples/test-network")  # Update this path
+FABRIC_SAMPLES_PATH = config("FABRIC_PATH", default="/path/to/fabric-samples/test-network")  # Update this path
+FABRIC_PATH = f"{FABRIC_SAMPLES_PATH}/test-network"  # Path to your test-network directory
 
 
 class NIMCService:
@@ -107,27 +108,81 @@ class NIMCService:
         return json.loads(plaintext)
     
     @classmethod
-    def record_on_blockchain(cls, user_id: str, hash: str, cid: str):
-        """
-        Invokes the chaincode to store the record.
-        Using peer CLI for the test-network is often the most reliable 
-        way to bypass deprecated Python SDK issues.
-        Returns the blockchain transaction ID.
-        """
+    def _get_fabric_env(cls):
+        """Helper to set up the environment variables for Peer CLI"""
+        env = os.environ.copy()
+        # 1. Path to core.yaml
+        env["FABRIC_CFG_PATH"] = f"{FABRIC_SAMPLES_PATH}/config/"
+        
+        # 2. Identity - Pointing to Org1's admin certificates
+        org1_msp = f"{FABRIC_PATH}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp"
+        env["CORE_PEER_MSPCONFIGPATH"] = org1_msp
+        env["CORE_PEER_LOCALMSPID"] = "Org1MSP"
+        
+        # 3. Connection Details
+        env["CORE_PEER_ADDRESS"] = "localhost:7051"
+        env["CORE_PEER_TLS_ENABLED"] = "true"
+        env["CORE_PEER_TLS_ROOTCERT_FILE"] = f"{FABRIC_PATH}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
+        
+        return env
+    
+    # @classmethod
+    # def record_on_blockchain(cls, user_id: str, hash: str, cid: str):
+    #     """
+    #     Invokes the chaincode to store the record.
+    #     Using peer CLI for the test-network is often the most reliable 
+    #     way to bypass deprecated Python SDK issues.
+    #     Returns the blockchain transaction ID.
+    #     """
+    #     try:
+    #         command = [
+    #             f"{FABRIC_PATH}/bin/peer", "chaincode", "invoke",
+    #             "-C", "mychannel", "-n", "basic",
+    #             "-c", json.dumps({"Args": ["CreateAsset", user_id, hash, cid]})
+    #         ]
+    #         result = subprocess.run(command, capture_output=True, text=True, timeout=30)
+    #         if result.returncode == 0:
+    #             return {"status": "success", "message": "Record stored on blockchain"}
+    #         else:
+    #             print(f"Blockchain Error: {result.stderr}")
+    #             return None
+    #     except Exception as e:
+    #         print(f"Blockchain Error: {e}")
+    #         return None
+    
+    @classmethod
+    def record_on_blockchain(cls, user_id: str, data_hash: str, cid: str):
         try:
+            # Note: asset-transfer-basic usually expects strings for all args
+            args = {"Args": ["CreateAsset", user_id, "blue", "10", "admin", data_hash]} 
+            # Check your specific chaincode args! The default 'basic' uses:
+            # ID, Color, Size, Owner, AppraisedValue. 
+            # If you wrote custom chaincode, use your args.
+            
             command = [
-                f"{FABRIC_PATH}/bin/peer", "chaincode", "invoke",
+                f"{FABRIC_SAMPLES_PATH}/bin/peer", "chaincode", "invoke",
                 "-C", "mychannel", "-n", "basic",
-                "-c", json.dumps({"Args": ["CreateAsset", user_id, hash, cid]})
+                "--peerAddresses", "localhost:7051",
+                "--tlsRootCertFiles", f"{FABRIC_PATH}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
+                "-c", json.dumps({"Args": ["CreateAsset", user_id, data_hash, cid]})
             ]
-            result = subprocess.run(command, capture_output=True, text=True, timeout=30)
+            
+            result = subprocess.run(
+                command, 
+                env=cls._get_fabric_env(), # PASS THE ENV HERE
+                capture_output=True, 
+                text=True, 
+                timeout=30
+            )
+            
             if result.returncode == 0:
-                return {"status": "success", "message": "Record stored on blockchain"}
+                print(result.stdout)
+                return {"status": "success", "tx_id": "captured_from_stdout"}
             else:
                 print(f"Blockchain Error: {result.stderr}")
                 return None
         except Exception as e:
-            print(f"Blockchain Error: {e}")
+            print(f"Exception: {e}")
             return None
 
     

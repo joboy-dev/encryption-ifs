@@ -35,3 +35,28 @@ Useful tmux shortcuts
 
 FABRIC HYPERLEDGER FOR BLOCKCHAIN
 https://hyperledger-fabric.readthedocs.io/en/release-2.5/install.html
+
+Install go
+# Update your package list
+sudo apt update
+
+# Install Go
+sudo apt install golang-go -y
+
+# Verify the installation
+go version
+
+Set go path
+Sometimes the system installs Go but doesn't add it to your profile. Add these lines to the end of your ~/.bashrc file:
+export GOPATH=$HOME/go
+export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+
+cd ~/fabric-samples/test-network
+./network.sh up createChannel -c mychannel -ca
+./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go
+
+
+Droppiga network completely
+./network.sh down
+docker volume prune
+
