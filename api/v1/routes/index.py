@@ -75,6 +75,7 @@ async def encrypt(
         if blockchain_res and blockchain_res.get("status") == "success":
             pass
         else:
+            db.rollback()  # Undo the user creation since blockchain recording failed
             logger.warning(f"Blockchain recording failed for user {user.id}")
             raise HTTPException(400, "Failed to record on blockchain")
             

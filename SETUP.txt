@@ -51,12 +51,43 @@ Sometimes the system installs Go but doesn't add it to your profile. Add these l
 export GOPATH=$HOME/go
 export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
 
+Update your /etc/hosts file
+
+You need to map the Fabric network's domain names to your local IP address (127.0.0.1).
+
+Open your hosts file with administrative privileges:
+
+Bash
+sudo nano /etc/hosts
+Add these lines at the bottom of the file:
+
+127.0.0.1   orderer.example.com
+127.0.0.1   peer0.org1.example.com
+127.0.0.1   peer0.org2.example.com
+Save and exit (Ctrl+O, Enter, then Ctrl+X).
+
+Why this is happening now
+
+When you run a command like peer lifecycle chaincode commit or approve, the CLI tool needs to "broadcast" the transaction to the Orderer. Since the Orderer is configured inside Docker as orderer.example.com, the CLI looks for that exact hostname. Without the host file entry, your computer is looking for it on the public internet instead of inside your own machine.
+
+Troubleshooting Check
+
+After updating the file, try to "ping" the orderer to see if it responds:
+
+ping orderer.example.com
+If you see replies from 127.0.0.1, the connection issue is resolved.
+
+
+
 cd ~/fabric-samples/test-network
 ./network.sh up createChannel -c mychannel -ca
 ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go
 
-
-Droppiga network completely
+Droppig a network completely
 ./network.sh down
-docker volume prune
+docker rm -f $(docker ps -aq) 2>/dev/null
+docker volume prune -f
 
+sudo rm -rf organizations/peerOrganizations
+sudo rm -rf organizations/ordererOrganizations
+sudo rm -rf channel-artifacts
