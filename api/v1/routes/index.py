@@ -76,6 +76,7 @@ async def encrypt(
             pass
         else:
             logger.warning(f"Blockchain recording failed for user {user.id}")
+            raise HTTPException(400, "Failed to record on blockchain")
             
         print({
             "cid": cid,
