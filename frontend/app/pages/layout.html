@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ app_name }}</title>
+    <title>{% block page_title %}{{ app_name }}{% endblock %}</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', path='images/favicon.ico') }}" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link 
@@ -16,12 +16,6 @@
 
     <style type="text/tailwindcss">
       @theme {
-        /*
-          * Custom Colors
-          * Each color and its shades are defined as CSS custom properties.
-          * The format is --color-{name}-{shade}: {hex_value};
-          */
-      
         /* Primary Colors (Cyan/Blue) */
         --color-primary-50: #ecfeff;
         --color-primary-100: #cffafe;
@@ -112,6 +106,7 @@
         --color-background: #f8fafc;
         --color-foreground: #0f172a;
         --color-card: #ffffff;
+        --color-card-background: #ffffff;
         --color-card-foreground: #0f172a;
         --color-popover: #ffffff;
         --color-popover-foreground: #0f172a;
@@ -142,42 +137,15 @@
         --color-accent-info-400: #60a5fa;
         --color-accent-info: #3b82f6;
         --color-accent-info-600: #2563eb;
-      
-        /*
-          * Custom Background Images
-          * These are also defined as CSS custom properties.
-          */
+
         --bg-gradient-radial: radial-gradient(var(--tw-gradient-stops));
-        --bg-cyber-grid: linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
-        /*
-          * Custom Animations & Keyframes
-          * Keyframes are defined with a standard @keyframes block.
-          * Animations are defined as CSS custom properties with the --animate prefix.
-          */
-      
-        @keyframes pulse-slow {
-          50% {
-            opacity: 0.5;
-          }
-        }
-      
-        @keyframes glow {
-          0% {
-            box-shadow: 0 0 5px rgba(34, 211, 238, 0.5);
-          }
-          100% {
-            box-shadow: 0 0 20px rgba(34, 211, 238, 0.8);
-          }
-        }
-      
-        --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        --animate-glow: glow 2s ease-in-out infinite alternate;
       }
 
       html,
       body {
         max-width: 100vw;
         overflow-x: hidden;
+        scroll-behavior: smooth;
       }
 
       body {
@@ -194,11 +162,11 @@
       }
 
       ::-webkit-scrollbar {
-        width: 2px;
+        width: 8px;
       }
 
       ::-webkit-scrollbar-track {
-        @apply bg-secondary pl-4;
+        @apply bg-secondary-100;
       }
 
       ::-webkit-scrollbar-thumb {
@@ -206,12 +174,11 @@
       }
 
       ::-webkit-scrollbar-thumb:hover {
-        @apply bg-primary;
+        @apply bg-primary-600;
       }
 
       @keyframes float {
-        0%,
-        100% {
+        0%, 100% {
           transform: translateY(0px);
         }
         50% {
@@ -224,7 +191,7 @@
       }
 
       .page-padding {
-        @apply max-md:px-8 max-sm:px-8 px-[80px] pt-24 pb-10;
+        @apply max-md:px-8 max-sm:px-6 px-[80px] py-8;
       }
 
       .nav-padding {
@@ -232,38 +199,27 @@
       }
 
       .btn {
-        @apply px-4 py-2 rounded-md font-bold text-center;
+        @apply px-4 py-2 rounded-lg font-bold text-center;
+      }
+
+      input, textarea, select {
+        @apply outline-none;
+      }
+
+      input:focus, textarea:focus, select:focus {
+        @apply ring-2 ring-primary;
       }
     </style>
 </head>
 
-<body class="flex items-center justify-center w-full bg-background">
+<body class="flex flex-col min-h-screen bg-background text-foreground">
     {% include "components/flash_message.html" %}
-
-    <div class="py-10 max-md:px-10 min-h-screen flex items-center justify-between gap-10 flex-col max-w-[65%] max-md:max-w-full">
-      <div id="header">
-        <div class="flex items-center justify-center gap-2 mb-5 text-2xl">
-          <i class="fa-solid fa-lock text-primary"></i>
-          <h1 class="text-foreground font-bold">{{ app_name }}</h1>
-        </div>
-
-        <p class="text-lg text-foreground text-center">Secure data encryption with blockchain verification</p>
-      </div>
-
-      {% block content %} {% endblock %}
-
-      <div id="footer" class="grid grid-cols-3 max-md:grid-cols-2 gap-10 w-full">
-        {% for benefit in benefits %}
-          <div class="w-full h-fit flex flex-col items-start gap-2 rounded-lg bg-card-background p-4 shadow-sm">
-            <div class="flex items-center justify-center rounded-full p-4 bg-{{ benefit.icon_color }}/10 mb-4">
-              <i class="fa-solid fa-{{ benefit.icon }} text-{{ benefit.icon_color }} text-xl"></i>
-            </div>
-
-            <h1 class="font-bold text-lg text-foreground">{{ benefit.title }}</h1>
-            <p class="text-muted-foreground">{{ benefit.description }}</p>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
+    {% include "components/navbar.html" %}
+    
+    <main class="flex-1">
+        {% block content %}{% endblock %}
+    </main>
+    
+    {% include "components/footer.html" %}
 </body>
 </html>

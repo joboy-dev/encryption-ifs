@@ -14,10 +14,28 @@
             </div>
             <div class="flex-1">
                 <h3 class="font-semibold text-success-900 mb-3">Registration Successful!</h3>
-                <p class="text-success-800 text-sm mb-3">Your data has been encrypted and stored securely. Save your CID for future verification.</p>
-                <div class="bg-white rounded-md p-3 border border-success-200">
-                    <div class="text-xs text-success-700 font-medium mb-1">IPFS CID</div>
-                    <div id="register-cid-value" class="font-mono text-sm text-success-900 break-all"></div>
+                <p class="text-success-800 text-sm mb-4">Your data has been encrypted and stored securely. Save your CID for future verification.</p>
+                <div class="bg-white rounded-md p-4 border border-success-200 mb-4">
+                    <div class="text-xs text-success-700 font-medium mb-2">IPFS CID</div>
+                    <div id="register-cid-value" class="font-mono text-sm text-success-900 break-all leading-relaxed"></div>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button
+                        type="button"
+                        onclick="resetRegisterForm()"
+                        class="flex-1 btn bg-success text-success-foreground hover:bg-success-600 transition-colors duration-150 px-4 py-2 text-sm rounded-lg font-medium"
+                    >
+                        <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+                        Try Again
+                    </button>
+                    <button
+                        type="button"
+                        onclick="copyToClipboard(document.getElementById('register-cid-value').textContent)"
+                        class="flex-1 btn bg-success-100 text-success-700 hover:bg-success-200 transition-colors duration-150 px-4 py-2 text-sm rounded-lg font-medium"
+                    >
+                        <i class="fa-solid fa-copy mr-2"></i>
+                        Copy CID
+                    </button>
                 </div>
             </div>
         </div>

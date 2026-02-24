@@ -1,4 +1,4 @@
-{% extends "pages/base_layout.html" %}
+{% extends "pages/layout.html" %}
 
 {% block page_title %}App - Encrypt & Verify Data - {{ app_name }}{% endblock %}
 
@@ -148,9 +148,230 @@
         }
     }
 
-    // Set initial state on page load
+    // Handle form submissions with AJAX
     document.addEventListener('DOMContentLoaded', () => {
         showTab('register');
+
+        // Register form handler
+        const registerForm = document.getElementById('form-register');
+        if (registerForm) {
+            registerForm.addEventListener('submit', handleRegisterSubmit);
+        }
+
+        // Verify form handler
+        const verifyForm = document.getElementById('form-verify');
+        if (verifyForm) {
+            verifyForm.addEventListener('submit', handleVerifySubmit);
+        }
+
+        // Get CID form handler
+        const getCidForm = document.getElementById('form-get-cid');
+        if (getCidForm) {
+            getCidForm.addEventListener('submit', handleGetCidSubmit);
+        }
     });
+
+    async function handleRegisterSubmit(e) {
+        e.preventDefault();
+        const form = e.target;
+        const resultContainer = document.getElementById('register-cid-result');
+        const resultValue = document.getElementById('register-cid-value');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        try {
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Processing...';
+
+            const formData = new FormData(form);
+            const response = await fetch('/encrypt', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Display success message
+                resultValue.textContent = data.cid;
+                resultContainer.classList.remove('hidden');
+                form.style.display = 'none';
+                
+                // Auto-scroll to result
+                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                // Display error message
+                showErrorAlert('register', data.message || 'An error occurred');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showErrorAlert('register', 'Failed to process request. Please try again.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
+    }
+
+    async function handleVerifySubmit(e) {
+        e.preventDefault();
+        const form = e.target;
+        const resultContainer = document.getElementById('verify-decrypted-result');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        try {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Verifying...';
+
+            const formData = new FormData(form);
+            const response = await fetch('/verify', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Display decrypted data
+                const decrypted = data.decrypted_data;
+                document.getElementById('verify-decrypted-email').textContent = decrypted.email || 'N/A';
+                document.getElementById('verify-decrypted-full_name').textContent = decrypted.full_name || 'N/A';
+                document.getElementById('verify-decrypted-id_number').textContent = decrypted.id_number || 'N/A';
+                
+                resultContainer.classList.remove('hidden');
+                form.style.display = 'none';
+                
+                // Auto-scroll to result
+                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                showErrorAlert('verify', data.message || 'Verification failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showErrorAlert('verify', 'Failed to verify. Please try again.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
+    }
+
+    async function handleGetCidSubmit(e) {
+        e.preventDefault();
+        const form = e.target;
+        const resultContainer = document.getElementById('get-cid-result');
+        const resultValue = document.getElementById('get-cid-value');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+
+        try {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Finding...';
+
+            const formData = new FormData(form);
+            const response = await fetch('/get-cid', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                resultValue.textContent = data.cid;
+                resultContainer.classList.remove('hidden');
+                form.style.display = 'none';
+                
+                // Auto-scroll to result
+                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                showErrorAlert('get-cid', data.message || 'Could not find CID');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showErrorAlert('get-cid', 'Failed to retrieve CID. Please try again.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
+    }
+
+    function showErrorAlert(tab, message) {
+        // Create error alert
+        const errorAlert = document.createElement('div');
+        errorAlert.className = 'mb-8 border border-danger-300 bg-danger-50 rounded-lg px-6 py-4 shadow-sm transition-all';
+        errorAlert.innerHTML = `
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-danger-100 flex items-center justify-center">
+                    <i class="fa-solid fa-circle-xmark text-danger-600 text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-danger-900 mb-1">Error</h3>
+                    <p class="text-danger-800 text-sm">${message}</p>
+                </div>
+                <button class="text-danger-600 hover:text-danger-900" onclick="this.parentElement.parentElement.remove()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        `;
+
+        // Get the appropriate tab content container
+        const tabContent = document.getElementById(`tab-content-${tab}`);
+        const form = tabContent.querySelector('form');
+        if (form) {
+            form.parentNode.insertBefore(errorAlert, form);
+        }
+
+        // Auto-remove after 6 seconds
+        setTimeout(() => {
+            if (errorAlert.parentNode) {
+                errorAlert.remove();
+            }
+        }, 6000);
+    }
+
+    // Reset register form
+    function resetRegisterForm() {
+        const form = document.getElementById('form-register');
+        const resultContainer = document.getElementById('register-cid-result');
+        form.reset();
+        resultContainer.classList.add('hidden');
+        form.style.display = 'block';
+    }
+
+    // Reset verify form
+    function resetVerifyForm() {
+        const form = document.getElementById('form-verify');
+        const resultContainer = document.getElementById('verify-decrypted-result');
+        form.reset();
+        resultContainer.classList.add('hidden');
+        form.style.display = 'block';
+    }
+
+    // Reset get-cid form
+    function resetGetCidForm() {
+        const form = document.getElementById('form-get-cid');
+        const resultContainer = document.getElementById('get-cid-result');
+        form.reset();
+        resultContainer.classList.add('hidden');
+        form.style.display = 'block';
+    }
+
+    // Copy text to clipboard
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            // Show notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-6 right-6 bg-success text-success-foreground px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-bounce';
+            notification.innerHTML = '<i class="fa-solid fa-check text-lg"></i> <span>Copied to clipboard!</span>';
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+        });
+    }
 </script>
+
 {% endblock %}

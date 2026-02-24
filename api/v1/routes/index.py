@@ -19,8 +19,8 @@ logger = create_logger(__name__)
 client = check_ipfs()
 
 @index_router.get("/")
-@add_template_context('pages/landing.html')
-async def landing(request: Request) -> dict:
+@add_template_context('pages/index.html')
+async def index(request: Request) -> dict:
     """Landing page - showcases the platform"""
     return {}
 

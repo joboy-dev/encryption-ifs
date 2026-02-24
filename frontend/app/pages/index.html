@@ -1,218 +1,213 @@
 {% extends "pages/layout.html" %}
 
+{% block page_title %}Home - Secure Data Encryption & Verification{% endblock %}
+
 {% block content %}
-<section class="flex items-center justify-center w-full">
-  <div class="bg-card w-full max-w-xl rounded-xl shadow-lg p-8 border border-border">
-    <!-- Tabs -->
-    <div class="flex mb-8 border-b border-border">
-      <button
-        id="tab-register"
-        class="flex-1 px-4 py-2 rounded-tl-lg font-medium text-sm focus:outline-none transition-colors duration-150 border border-border border-b-0 bg-white text-foreground"
-        type="button"
-        onclick="showTab('register')"
-        style="border-bottom-width: 2px;"
-      >
-        <i class="fa-solid fa-lock mr-2"></i>
-        Register & Encrypt
-      </button>
+<!-- Hero Section -->
+<section class="w-full pt-12 pb-20 bg-gradient-to-br from-background via-background to-primary-50">
+    <div class="page-padding max-md:pt-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <!-- Left Column -->
+                <div class="flex flex-col gap-8">
+                    <div>
+                        <h1 class="text-5xl md:text-6xl font-bold text-foreground leading-tight mb-4">
+                            Secure Your <span class="text-primary">Data</span> with Confidence
+                        </h1>
+                        <p class="text-lg text-muted-foreground">
+                            Enterprise-grade encryption with blockchain verification. Protect your sensitive information with ECC encryption, IPFS storage, and immutable records.
+                        </p>
+                    </div>
 
-      <button
-        id="tab-verify"
-        class="flex-1 px-4 py-2 font-medium text-sm focus:outline-none transition-colors duration-150 border-t border-b-0 border-r border-border bg-primary/10 text-muted-foreground"
-        type="button"
-        onclick="showTab('verify')"
-      >
-        <i class="fa-solid fa-circle-check mr-2"></i>
-        Verify & Decrypt
-      </button>
+                    <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                        <a href="/app" class="btn bg-primary text-primary-foreground hover:bg-primary-600 transition-colors duration-150 text-base px-6 py-3">
+                            <i class="fa-solid fa-rocket mr-2"></i>
+                            Get Started Now
+                        </a>
+                        <a href="#how-it-works" class="btn border-2 border-primary text-primary hover:bg-primary-50 transition-colors duration-150 text-base px-6 py-3">
+                            <i class="fa-solid fa-circle-play mr-2"></i>
+                            Learn How It Works
+                        </a>
+                    </div>
 
-      <button
-        id="tab-get-cid"
-        class="flex-1 px-4 py-2 rounded-tr-lg rounded-br-lg font-medium text-sm focus:outline-none transition-colors duration-150 border-t border-b-0 border-r border-border bg-primary/10 text-muted-foreground"
-        type="button"
-        onclick="showTab('get-cid')"
-      >
-        <i class="fa-solid fa-magnifying-glass mr-2"></i>
-        Get CID by Email
-      </button>
+                    <!-- Trust Indicators -->
+                    <div class="flex flex-wrap gap-6 pt-4">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-shield text-primary text-xl"></i>
+                            <span class="text-sm font-medium text-foreground">Bank-grade Security</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-check text-success text-xl"></i>
+                            <span class="text-sm font-medium text-foreground">IPFS Verified</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-cube text-accent text-xl"></i>
+                            <span class="text-sm font-medium text-foreground">Blockchain Ready</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Hero Illustration -->
+                <div class="hidden md:flex items-center justify-center">
+                    <div class="relative w-full aspect-square">
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-full blur-3xl"></div>
+                        <div class="relative w-full h-full flex items-center justify-center">
+                            <div class="w-64 h-64 bg-gradient-to-br from-primary to-primary-600 rounded-3xl shadow-2xl flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
+                                <div class="text-center">
+                                    <i class="fa-solid fa-lock text-white text-6xl mb-4"></i>
+                                    <p class="text-white font-bold text-lg">Encrypted & Secure</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <!-- Register & Encrypt Form -->
-    {% include "pages/register.html" %}
-
-    <!-- Verify & Decrypt Form -->
-    {% include "pages/verify.html" %}
-
-    <!-- Get CID by Email Form -->
-    {% include "pages/get-cid.html" %}
-    
-  </div>
-  <script>
-      function showTab(tab) {
-          // Tab buttons
-          const btnRegister = document.getElementById('tab-register');
-          const btnVerify = document.getElementById('tab-verify');
-          const btnGetCid = document.getElementById('tab-get-cid');
-
-          // Tab contents
-          const contentRegister = document.getElementById('tab-content-register');
-          const contentVerify = document.getElementById('tab-content-verify');
-          const contentGetCid = document.getElementById('tab-content-get-cid');
-
-          if (tab === 'register') {
-              contentRegister.classList.remove('hidden');
-              contentRegister.classList.add('block');
-
-              contentVerify.classList.remove('block');
-              contentVerify.classList.add('hidden');
-
-              contentGetCid.classList.remove('block');
-              contentGetCid.classList.add('hidden');
-              // Activate register tab
-              btnRegister.classList.remove('bg-primary/10', 'text-muted-foreground');
-              btnRegister.classList.add('bg-white', 'text-foreground');
-              btnRegister.style.borderBottomWidth = '2px';
-
-              btnVerify.classList.remove('bg-white', 'text-foreground');
-              btnVerify.classList.add('bg-primary/10', 'text-muted-foreground');
-              btnVerify.style.borderBottomWidth = '0px';
-
-              btnGetCid.classList.remove('bg-white', 'text-foreground');
-              btnGetCid.classList.add('bg-primary/10', 'text-muted-foreground');
-              btnGetCid.style.borderBottomWidth = '0px';
-          } else if (tab === 'verify') {
-              contentVerify.classList.remove('hidden');
-              contentVerify.classList.add('block');
-
-              contentRegister.classList.remove('block');
-              contentRegister.classList.add('hidden');
-
-              contentGetCid.classList.remove('block');
-              contentGetCid.classList.add('hidden');
-              // Activate verify tab
-              btnVerify.classList.remove('bg-primary/10', 'text-muted-foreground');
-              btnVerify.classList.add('bg-white', 'text-foreground');
-              btnVerify.style.borderBottomWidth = '2px';
-
-              btnRegister.classList.remove('bg-white', 'text-foreground');
-              btnRegister.classList.add('bg-primary/10', 'text-muted-foreground');
-              btnRegister.style.borderBottomWidth = '0px';
-
-              btnGetCid.classList.remove('bg-white', 'text-foreground');
-              btnGetCid.classList.add('bg-primary/10', 'text-muted-foreground');
-              btnGetCid.style.borderBottomWidth = '0px';
-          } else if (tab === 'get-cid') {
-              contentGetCid.classList.remove('hidden');
-              contentGetCid.classList.add('block');
-
-              contentRegister.classList.remove('block');
-              contentRegister.classList.add('hidden');
-
-              contentVerify.classList.remove('block');
-              contentVerify.classList.add('hidden');
-              // Activate get-cid tab
-              btnGetCid.classList.remove('bg-primary/10', 'text-muted-foreground');
-              btnGetCid.classList.add('bg-white', 'text-foreground');
-              btnGetCid.style.borderBottomWidth = '2px';
-
-              btnRegister.classList.remove('bg-white', 'text-foreground');
-              btnRegister.classList.add('bg-primary/10', 'text-muted-foreground');
-              btnRegister.style.borderBottomWidth = '0px';
-
-              btnVerify.classList.remove('bg-white', 'text-foreground');
-              btnVerify.classList.add('bg-primary/10', 'text-muted-foreground');
-              btnVerify.style.borderBottomWidth = '0px';
-          }
-      }
-
-      // Set default tab on page load
-      document.addEventListener('DOMContentLoaded', function() {
-          showTab('register');
-          initAjaxForms();
-      });
-
-      function initAjaxForms() {
-        const formConfigs = [
-          {
-            form: document.getElementById('form-register'),
-            action: '/encrypt',
-            cidResult: document.getElementById('register-cid-result'),
-            cidValue: document.getElementById('register-cid-value')
-          },
-          {
-            form: document.getElementById('form-verify'),
-            action: '/verify',
-            verifyResult: document.getElementById('verify-decrypted-result'),
-            verifyEmail: document.getElementById('verify-decrypted-email'),
-            verifyFullName: document.getElementById('verify-decrypted-full_name'),
-            verifyIdNumber: document.getElementById('verify-decrypted-id_number')
-          },
-          {
-            form: document.getElementById('form-get-cid'),
-            action: '/get-cid',
-            cidResult: document.getElementById('get-cid-result'),
-            cidValue: document.getElementById('get-cid-value')
-          }
-        ];
-
-        formConfigs.forEach(function(config) {
-          if (!config.form) return;
-          config.form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const form = config.form;
-            const formData = new FormData(form);
-            const btn = form.querySelector('button[type="submit"]');
-            const originalText = btn ? btn.innerHTML : '';
-
-            if (btn) {
-              btn.disabled = true;
-              btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Processing...';
-            }
-
-            fetch(config.action, {
-              method: 'POST',
-              body: formData,
-              headers: {
-                'Accept': 'application/json'
-              }
-            })
-              .then(function(r) { return r.json().then(function(data) { return { ok: r.ok, status: r.status, data: data }; }); })
-              .then(function(result) {
-                const data = result.data;
-                const category = data.success ? 'success' : 'error';
-                const message = data.message || data.detail || (data.success ? 'Done' : 'Error');
-                if (typeof showFlashMessage === 'function') {
-                  showFlashMessage(message, category);
-                }
-                if (config.cidResult && config.cidValue && data.cid) {
-                  config.cidValue.textContent = data.cid;
-                  config.cidResult.classList.remove('hidden');
-                }
-                if (config.verifyResult && data.decrypted_data) {
-                  if (config.verifyEmail) config.verifyEmail.textContent = data.decrypted_data.email || '—';
-                  if (config.verifyFullName) config.verifyFullName.textContent = data.decrypted_data.full_name || '—';
-                  if (config.verifyIdNumber) config.verifyIdNumber.textContent = data.decrypted_data.id_number || '—';
-                  config.verifyResult.classList.remove('hidden');
-                } else if (config.verifyResult && !data.success) {
-                  config.verifyResult.classList.add('hidden');
-                }
-              })
-              .catch(function() {
-                if (typeof showFlashMessage === 'function') {
-                  showFlashMessage('An unexpected error occurred', 'error');
-                }
-              })
-              .finally(function() {
-                if (btn) {
-                  btn.disabled = false;
-                  btn.innerHTML = originalText;
-                }
-              });
-          });
-        });
-      }
-  </script>
 </section>
 
+<!-- Features Section -->
+<section id="features" class="w-full py-20 bg-white">
+    <div class="page-padding">
+        <div class="max-w-7xl mx-auto">
+            <!-- Section Header -->
+            <div class="text-center mb-16">
+                <span class="text-primary font-semibold text-sm">KEY FEATURES</span>
+                <h2 class="text-4xl md:text-5xl font-bold text-foreground mt-2 mb-4">
+                    Why Choose {{ app_name }}?
+                </h2>
+                <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    Multi-layered security approach combining modern cryptography, distributed storage, and blockchain verification.
+                </p>
+            </div>
 
+            <!-- Features Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {% set features = [
+                    {
+                        "icon": "lock",
+                        "icon_color": "primary",
+                        "title": "ECC Encryption",
+                        "description": "Military-grade Elliptic Curve Cryptography (ECC) ensures your data is encrypted with the highest security standards available."
+                    },
+                    {
+                        "icon": "database",
+                        "icon_color": "accent",
+                        "title": "IPFS Storage",
+                        "description": "Distributed storage via IPFS with immutable Content Identifiers (CID) for permanent, tamper-proof file access."
+                    },
+                    {
+                        "icon": "cube",
+                        "icon_color": "success",
+                        "title": "Blockchain Verified",
+                        "description": "Data integrity verified on Hyperledger Fabric blockchain for complete auditability and tamper detection."
+                    }
+                ] %}
+                {% for feature in features %}
+                    {% include "components/feature_card.html" %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section id="how-it-works" class="w-full py-20 bg-secondary-50">
+    <div class="page-padding">
+        <div class="max-w-7xl mx-auto">
+            <!-- Section Header -->
+            <div class="text-center mb-16">
+                <span class="text-primary font-semibold text-sm">PROCESS</span>
+                <h2 class="text-4xl md:text-5xl font-bold text-foreground mt-2 mb-4">
+                    How It Works
+                </h2>
+                <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    A simple four-step process to protect your data securely.
+                </p>
+            </div>
+
+            <!-- Steps -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Step 1 -->
+                <div class="relative">
+                    <div class="flex flex-col items-center text-center gap-4">
+                        <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold shadow-lg">
+                            1
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-foreground mb-2">Submit Data</h3>
+                            <p class="text-muted-foreground text-sm">
+                                Provide your information through our secure form.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="hidden md:block absolute top-8 -right-3 w-6 h-1 bg-gradient-to-r from-primary to-primary-600"></div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative">
+                    <div class="flex flex-col items-center text-center gap-4">
+                        <div class="w-16 h-16 rounded-full bg-accent text-white flex items-center justify-center text-2xl font-bold shadow-lg">
+                            2
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-foreground mb-2">Encrypt Data</h3>
+                            <p class="text-muted-foreground text-sm">
+                                Your data is encrypted using ECC cryptography.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="hidden md:block absolute top-8 -right-3 w-6 h-1 bg-gradient-to-r from-accent to-accent-600"></div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative">
+                    <div class="flex flex-col items-center text-center gap-4">
+                        <div class="w-16 h-16 rounded-full bg-success text-white flex items-center justify-center text-2xl font-bold shadow-lg">
+                            3
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-foreground mb-2">Upload to IPFS</h3>
+                            <p class="text-muted-foreground text-sm">
+                                Encrypted data is stored on IPFS with a unique CID.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="hidden md:block absolute top-8 -right-3 w-6 h-1 bg-gradient-to-r from-success to-success-600"></div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="flex flex-col items-center text-center gap-4">
+                    <div class="w-16 h-16 rounded-full bg-warning text-white flex items-center justify-center text-2xl font-bold shadow-lg">
+                        4
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-foreground mb-2">Blockchain Record</h3>
+                        <p class="text-muted-foreground text-sm">
+                            Hash and CID recorded on blockchain for verification.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="w-full py-20 bg-gradient-to-r from-primary to-primary-600">
+    <div class="page-padding">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                Ready to Secure Your Data?
+            </h2>
+            <p class="text-lg text-primary-100 mb-8">
+                Start encrypting and verifying your data in minutes with our secure platform.
+            </p>
+            <a href="/app" class="btn bg-white text-primary hover:bg-primary-50 transition-colors duration-150 text-base px-8 py-4 font-bold">
+                <i class="fa-solid fa-arrow-right mr-2"></i>
+                Launch App Now
+            </a>
+        </div>
+    </div>
+</section>
 {% endblock %}
