@@ -8,6 +8,8 @@ import json, subprocess
 from base64 import b64encode, b64decode
 from decouple import config
 
+from alembic import env
+
 # -------------------------
 # ECC KEY PAIR (PoC ONLY)
 # -------------------------
@@ -123,7 +125,7 @@ class NIMCService:
         env["CORE_PEER_ADDRESS"] = "localhost:7051"
         env["CORE_PEER_TLS_ENABLED"] = "true"
         env["CORE_PEER_TLS_ROOTCERT_FILE"] = f"{FABRIC_PATH}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
-        
+        env["ORDERER_CA"] = f"{FABRIC_PATH}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
         return env
     
     # @classmethod
