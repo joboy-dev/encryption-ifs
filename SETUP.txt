@@ -81,12 +81,13 @@ If you see replies from 127.0.0.1, the connection issue is resolved.
 
 cd ~/fabric-samples/test-network
 ./network.sh up createChannel -c mychannel -ca
-./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go
+./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go (NOTE: You can specify channel if your channel is not the default name of mychannel using -c [channelName])
 
 Droppig a network completely
 ./network.sh down
 docker rm -f $(docker ps -aq) 2>/dev/null
 docker volume prune -f
+docker network prune -f
 
 sudo rm -rf organizations/peerOrganizations
 sudo rm -rf organizations/ordererOrganizations
