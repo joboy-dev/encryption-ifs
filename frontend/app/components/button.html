@@ -1,0 +1,31 @@
+<!-- Button Component
+     Usage: {% include "components/button.html" with context %}
+     
+
+     button_text (required): The text to display on the button
+     button_url (optional): The href link for the button
+     button_class (optional): Additional CSS classes (default: "btn bg-primary text-primary-foreground hover:bg-primary-600")
+     button_type (optional): Button type (default: "button", can be "submit", "link", etc.)
+     button_icon (optional): Font Awesome icon class (e.g., "fa-arrow-right")
+     button_disabled (optional): If true, the button is disabled
+-->
+
+{% if button_type == "link" or button_url %}
+    <a href="{{ button_url or '#' }}" class="{{ button_class or 'btn bg-primary text-primary-foreground hover:bg-primary-600' }} transition-colors duration-150 inline-flex items-center gap-2 {{ 'opacity-50 cursor-not-allowed' if button_disabled else '' }}">
+        {{ button_text }}
+        {% if button_icon %}
+            <i class="fa-solid fa-{{ button_icon }}"></i>
+        {% endif %}
+    </a>
+{% else %}
+    <button 
+        type="{{ button_type or 'button' }}"
+        class="{{ button_class or 'btn bg-primary text-primary-foreground hover:bg-primary-600' }} transition-colors duration-150 inline-flex items-center gap-2 {{ 'opacity-50 cursor-not-allowed' if button_disabled else '' }}"
+        {% if button_disabled %}disabled{% endif %}
+    >
+        {{ button_text }}
+        {% if button_icon %}
+            <i class="fa-solid fa-{{ button_icon }}"></i>
+        {% endif %}
+    </button>
+{% endif %}

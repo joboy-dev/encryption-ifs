@@ -39,12 +39,12 @@ async def lifespan(app: FastAPI):
     yield
 
 # Check if IPFS is running
-ipfs_client = check_ipfs()
-if ipfs_client is None:
-    logger.error("IPFS is not running")
-    raise Exception("IPFS is not running")
-else:
-    logger.info("IPFS is running")
+# ipfs_client = check_ipfs()
+# if ipfs_client is None:
+#     logger.error("IPFS is not running")
+#     raise Exception("IPFS is not running")
+# else:
+#     logger.info("IPFS is running")
 
 app = FastAPI(
     lifespan=lifespan,

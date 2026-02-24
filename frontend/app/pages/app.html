@@ -1,0 +1,156 @@
+{% extends "pages/base_layout.html" %}
+
+{% block page_title %}App - Encrypt & Verify Data - {{ app_name }}{% endblock %}
+
+{% block content %}
+<section class="w-full">
+    <div class="page-padding">
+        <div class="max-w-3xl mx-auto">
+            <!-- Page Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold text-foreground mb-4">
+                    Encrypt & Verify Your Data
+                </h1>
+                <p class="text-lg text-muted-foreground">
+                    Select an action below to get started
+                </p>
+            </div>
+
+            <!-- Main Card Container -->
+            <div class="bg-card w-full rounded-2xl shadow-xl p-8 border border-border">
+                <!-- Tabs Navigation -->
+                <div class="flex flex-col sm:flex-row gap-3 mb-8 pb-8 border-b border-border">
+                    <button
+                        id="tab-register"
+                        class="flex-1 px-6 py-3 rounded-lg font-semibold text-sm focus:outline-none transition-all duration-150 border-2 border-primary bg-primary text-primary-foreground hover:bg-primary-600"
+                        type="button"
+                        onclick="showTab('register')"
+                    >
+                        <i class="fa-solid fa-lock mr-2"></i>
+                        Register & Encrypt
+                    </button>
+
+                    <button
+                        id="tab-verify"
+                        class="flex-1 px-6 py-3 rounded-lg font-semibold text-sm focus:outline-none transition-all duration-150 border-2 border-border bg-secondary-50 text-foreground hover:bg-secondary-100"
+                        type="button"
+                        onclick="showTab('verify')"
+                    >
+                        <i class="fa-solid fa-circle-check mr-2"></i>
+                        Verify & Decrypt
+                    </button>
+
+                    <button
+                        id="tab-get-cid"
+                        class="flex-1 px-6 py-3 rounded-lg font-semibold text-sm focus:outline-none transition-all duration-150 border-2 border-border bg-secondary-50 text-foreground hover:bg-secondary-100"
+                        type="button"
+                        onclick="showTab('get-cid')"
+                    >
+                        <i class="fa-solid fa-magnifying-glass mr-2"></i>
+                        Get CID by Email
+                    </button>
+                </div>
+
+                <!-- Tab Contents -->
+                {% include "pages/register.html" %}
+                {% include "pages/verify.html" %}
+                {% include "pages/get-cid.html" %}
+            </div>
+
+            <!-- Info Section -->
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="flex flex-col items-start gap-3 p-6 rounded-xl bg-primary-50 border border-primary-200">
+                    <div class="w-10 h-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">
+                        <i class="fa-solid fa-rocket"></i>
+                    </div>
+                    <h3 class="font-bold text-foreground">Quick & Easy</h3>
+                    <p class="text-sm text-muted-foreground">
+                        Simple process to encrypt and secure your data in minutes.
+                    </p>
+                </div>
+
+                <div class="flex flex-col items-start gap-3 p-6 rounded-xl bg-accent-50 border border-accent-200">
+                    <div class="w-10 h-10 rounded-lg bg-accent text-accent-foreground flex items-center justify-center">
+                        <i class="fa-solid fa-shield"></i>
+                    </div>
+                    <h3 class="font-bold text-foreground">Highly Secure</h3>
+                    <p class="text-sm text-muted-foreground">
+                        Military-grade ECC encryption plus blockchain verification.
+                    </p>
+                </div>
+
+                <div class="flex flex-col items-start gap-3 p-6 rounded-xl bg-success-50 border border-success-200">
+                    <div class="w-10 h-10 rounded-lg bg-success text-success-foreground flex items-center justify-center">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <h3 class="font-bold text-foreground">Always Available</h3>
+                    <p class="text-sm text-muted-foreground">
+                        Recover your data anytime using your email address.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function showTab(tab) {
+        // Tab buttons
+        const btnRegister = document.getElementById('tab-register');
+        const btnVerify = document.getElementById('tab-verify');
+        const btnGetCid = document.getElementById('tab-get-cid');
+
+        // Tab contents
+        const contentRegister = document.getElementById('tab-content-register');
+        const contentVerify = document.getElementById('tab-content-verify');
+        const contentGetCid = document.getElementById('tab-content-get-cid');
+
+        // Helper function to reset button styles
+        function resetButtons() {
+            btnRegister.classList.remove('bg-primary', 'text-primary-foreground', 'border-primary');
+            btnRegister.classList.add('bg-secondary-50', 'text-foreground', 'border-border');
+            
+            btnVerify.classList.remove('bg-primary', 'text-primary-foreground', 'border-primary');
+            btnVerify.classList.add('bg-secondary-50', 'text-foreground', 'border-border');
+            
+            btnGetCid.classList.remove('bg-primary', 'text-primary-foreground', 'border-primary');
+            btnGetCid.classList.add('bg-secondary-50', 'text-foreground', 'border-border');
+        }
+
+        // Helper function to hide all tabs
+        function hideAllTabs() {
+            contentRegister.classList.add('hidden');
+            contentVerify.classList.add('hidden');
+            contentGetCid.classList.add('hidden');
+        }
+
+        if (tab === 'register') {
+            resetButtons();
+            hideAllTabs();
+            
+            contentRegister.classList.remove('hidden');
+            btnRegister.classList.remove('bg-secondary-50', 'text-foreground', 'border-border');
+            btnRegister.classList.add('bg-primary', 'text-primary-foreground', 'border-primary');
+        } else if (tab === 'verify') {
+            resetButtons();
+            hideAllTabs();
+            
+            contentVerify.classList.remove('hidden');
+            btnVerify.classList.remove('bg-secondary-50', 'text-foreground', 'border-border');
+            btnVerify.classList.add('bg-primary', 'text-primary-foreground', 'border-primary');
+        } else if (tab === 'get-cid') {
+            resetButtons();
+            hideAllTabs();
+            
+            contentGetCid.classList.remove('hidden');
+            btnGetCid.classList.remove('bg-secondary-50', 'text-foreground', 'border-border');
+            btnGetCid.classList.add('bg-primary', 'text-primary-foreground', 'border-primary');
+        }
+    }
+
+    // Set initial state on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        showTab('register');
+    });
+</script>
+{% endblock %}

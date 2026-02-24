@@ -1,57 +1,73 @@
 <div id="tab-content-register" class="block">
-    <h2 class="text-xl font-bold text-foreground mb-1">Register & Encrypt Data</h2>
-    <p class="text-muted-foreground mb-6 text-base">
-        Enter your information to encrypt and store it securely on IPFS with blockchain verification.
-    </p>
-
-    <div id="register-cid-result" class="hidden mb-6 border-l-4 border-green-500 bg-green-50 rounded-md px-4 py-3 shadow transition-all">
-      <div class="flex items-center space-x-3">
-        <i class="fa-solid fa-circle-check text-green-500 text-xl"></i>
-        <div>
-          <div class="font-semibold text-green-700 text-base">Registered successfully!</div>
-          <div class="text-green-700 mt-1 break-all">
-            <span class="font-medium">Your IPFS CID:&nbsp;</span>
-            <span id="register-cid-value" class="font-mono"></span>
-          </div>
-        </div>
-      </div>
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold text-foreground mb-2">Register & Encrypt Data</h2>
+        <p class="text-muted-foreground">
+            Enter your information to encrypt and store it securely on IPFS with blockchain verification.
+        </p>
     </div>
 
-    <form id="form-register" method="post" action="/encrypt">
-        <div class="mb-4">
-            <label class="block text-foreground font-semibold mb-1" for="email">Email Address</label>
+    <!-- Success Alert -->
+    <div id="register-cid-result" class="hidden mb-8 border border-success-300 bg-success-50 rounded-lg px-6 py-4 shadow-sm transition-all">
+        <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-success-100 flex items-center justify-center">
+                <i class="fa-solid fa-circle-check text-success-600 text-lg"></i>
+            </div>
+            <div class="flex-1">
+                <h3 class="font-semibold text-success-900 mb-3">Registration Successful!</h3>
+                <p class="text-success-800 text-sm mb-3">Your data has been encrypted and stored securely. Save your CID for future verification.</p>
+                <div class="bg-white rounded-md p-3 border border-success-200">
+                    <div class="text-xs text-success-700 font-medium mb-1">IPFS CID</div>
+                    <div id="register-cid-value" class="font-mono text-sm text-success-900 break-all"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Form -->
+    <form id="form-register" method="post" action="/encrypt" class="space-y-5">
+        <div>
+            <label class="block text-foreground font-semibold mb-2" for="email">
+                <i class="fa-solid fa-envelope mr-2 text-primary"></i>
+                Email Address
+            </label>
             <input
                 type="email"
                 id="email"
                 name="email"
-                placeholder="Enter your email"
-                class="w-full px-4 py-2 rounded-md border border-border text-base bg-background focus:ring-primary focus:border-primary outline-none transition"
+                placeholder="your@email.com"
+                class="w-full px-4 py-3 rounded-lg border border-border bg-secondary-50 text-foreground text-base font-medium placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition"
                 autocomplete="email"
                 required
             />
         </div>
 
-        <div class="mb-4">
-            <label class="block text-foreground font-semibold mb-1" for="full_name">Full Name</label>
+        <div>
+            <label class="block text-foreground font-semibold mb-2" for="full_name">
+                <i class="fa-solid fa-user mr-2 text-primary"></i>
+                Full Name
+            </label>
             <input
                 type="text"
                 id="full_name"
                 name="full_name"
-                placeholder="Enter your full name"
-                class="w-full px-4 py-2 rounded-md border border-border text-base bg-background focus:ring-primary focus:border-primary outline-none transition"
+                placeholder="John Doe"
+                class="w-full px-4 py-3 rounded-lg border border-border bg-secondary-50 text-foreground text-base font-medium placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition"
                 autocomplete="name"
                 required
             />
         </div>
 
-        <div class="mb-6">
-            <label class="block text-foreground font-semibold mb-1" for="id_number">ID Number</label>
+        <div>
+            <label class="block text-foreground font-semibold mb-2" for="id_number">
+                <i class="fa-solid fa-id-card mr-2 text-primary"></i>
+                ID Number
+            </label>
             <input
                 type="text"
                 id="id_number"
                 name="id_number"
                 placeholder="Enter your ID number"
-                class="w-full px-4 py-2 rounded-md border border-border text-base bg-background focus:ring-primary focus:border-primary outline-none transition"
+                class="w-full px-4 py-3 rounded-lg border border-border bg-secondary-50 text-foreground text-base font-medium placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition"
                 autocomplete="off"
                 required
             />
@@ -59,8 +75,9 @@
         
         <button
             type="submit"
-            class="w-full btn bg-primary text-primary-foreground hover:bg-primary-600 transition-colors duration-150 text-base"
+            class="w-full btn bg-primary text-primary-foreground hover:bg-primary-600 transition-colors duration-150 text-base px-4 py-3 font-bold rounded-lg"
         >
+            <i class="fa-solid fa-lock mr-2"></i>
             Register & Encrypt
         </button>
     </form>

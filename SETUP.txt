@@ -4,7 +4,7 @@ IPFS RELATED INSTALLATIONS
 - Download IPFS using:
     - Get the version you want to use. I got go-ipfs 0.5.0 from https://github.com/ipfs/ipfs-desktop/releases so it can work with python ipfshttpclient package
     - I downloaded it as a tar.gz file from github
-    - Extracted the file and ran the install.sh script
+    - Extracted the file with `tar xzvf <file_name>` and ran the install.sh script
 - Run:
     ipfs init
 - Run:
@@ -23,6 +23,7 @@ https://dist.ipfs.tech/kubo/v0.24.0/
 
 Useful tmux shortcuts
 
+
 | Action             | Shortcut                |
 | ------------------ | ----------------------- |
 | Split vertically   | `Ctrl + B` → `%`        |
@@ -34,6 +35,10 @@ Useful tmux shortcuts
 
 FABRIC HYPERLEDGER FOR BLOCKCHAIN
 https://hyperledger-fabric.readthedocs.io/en/release-2.5/install.html
+
+
+
+
 
 
 aiosmtplib==3.0.2

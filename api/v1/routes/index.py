@@ -19,32 +19,17 @@ logger = create_logger(__name__)
 client = check_ipfs()
 
 @index_router.get("/")
-@add_template_context('pages/index.html')
-async def index(request: Request) -> dict:
-    benefits = [
-        {
-            "icon": "lock",
-            "icon_color": "primary",
-            "title": "ECC Encryption",
-            "description": "Your data is encrypted using Elliptic Curve Cryptography for maximum security.",
-        },
-        {
-            "icon": "circle-check",
-            "icon_color": "amber-600",
-            "title": "IPFS Storage",
-            "description": "Encrypted files are stored on IPFS with immutable Content Identifiers (CID).",
-        },
-        {
-            "icon": "lock",
-            "icon_color": "emerald-600",
-            "title": "Blockchain Verified",
-            "description": "Data hash and CID are recorded on Hyperledger Fabric for tamper detection.",
-        }
-    ]
-    
-    return {
-        "benefits": benefits
-    }
+@add_template_context('pages/landing.html')
+async def landing(request: Request) -> dict:
+    """Landing page - showcases the platform"""
+    return {}
+
+
+@index_router.get("/app")
+@add_template_context('pages/app.html')
+async def app(request: Request) -> dict:
+    """Main application page - encryption and verification interface"""
+    return {}
 
 @index_router.post("/encrypt")
 async def encrypt(

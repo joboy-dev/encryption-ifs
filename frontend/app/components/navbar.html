@@ -1,0 +1,71 @@
+<nav class="sticky top-0 z-50 w-full bg-white border-b border-border shadow-sm">
+    <div class="nav-padding">
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <!-- Logo Section -->
+            {% include "components/logo.html" %}
+
+            <!-- Navigation Links -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="/" class="text-foreground font-medium hover:text-primary transition-colors duration-150 text-sm">
+                    Home
+                </a>
+                <a href="/app" class="text-foreground font-medium hover:text-primary transition-colors duration-150 text-sm">
+                    App
+                </a>
+                <a href="/#features" class="text-muted-foreground hover:text-primary transition-colors duration-150 text-sm">
+                    Features
+                </a>
+                <a href="/#how-it-works" class="text-muted-foreground hover:text-primary transition-colors duration-150 text-sm">
+                    How It Works
+                </a>
+            </div>
+
+            <!-- CTA Button & Mobile Menu -->
+            <div class="flex items-center gap-4">
+                <a href="/app" class="hidden md:inline-block btn bg-primary text-primary-foreground hover:bg-primary-600 transition-colors duration-150">
+                    Get Started
+                </a>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-secondary-50 transition-colors duration-150">
+                    <i class="fa-solid fa-bars text-foreground text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 border-t border-border">
+            <a href="/" class="block px-4 py-2 text-foreground hover:bg-secondary-50 rounded-lg transition-colors duration-150">
+                Home
+            </a>
+            <a href="/app" class="block px-4 py-2 text-foreground hover:bg-secondary-50 rounded-lg transition-colors duration-150">
+                App
+            </a>
+            <a href="/#features" class="block px-4 py-2 text-muted-foreground hover:bg-secondary-50 rounded-lg transition-colors duration-150">
+                Features
+            </a>
+            <a href="/#how-it-works" class="block px-4 py-2 text-muted-foreground hover:bg-secondary-50 rounded-lg transition-colors duration-150">
+                How It Works
+            </a>
+            <a href="/app" class="block mt-4 btn bg-primary text-primary-foreground hover:bg-primary-600 transition-colors duration-150">
+                Get Started
+            </a>
+        </div>
+    </div>
+</nav>
+
+<script>
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    mobileMenuBtn?.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    // Close menu when clicking on a link
+    document.querySelectorAll('#mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+    });
+</script>
