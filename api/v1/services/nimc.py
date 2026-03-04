@@ -198,10 +198,16 @@ class NIMCService:
         try:
             print('user_id', user_id)
             
+            # command = [
+            #     f"{FABRIC_SAMPLES_PATH}/bin/peer", "chaincode", "query",
+            #     "-C", config("CHANNEL_NAME"), "-n", "basic",
+            #     "-c", json.dumps({"Args": ["ReadAsset", str(user_id)]})
+            # ]
+            
             command = [
                 f"{FABRIC_SAMPLES_PATH}/bin/peer", "chaincode", "query",
                 "-C", config("CHANNEL_NAME"), "-n", "basic",
-                "-c", json.dumps({"Args": ["ReadAsset", str(user_id)]})
+                "-c", '{"Args":["GetAllAssets"]}' 
             ]
             result = subprocess.run(
                 command,
@@ -211,6 +217,7 @@ class NIMCService:
                 timeout=30
             )
             if result.returncode == 0:
+                print(result.stdout)
                 output = json.loads(result.stdout)
                 print(output)
                 return output
