@@ -196,7 +196,7 @@ class NIMCService:
             command = [
                 f"{FABRIC_SAMPLES_PATH}/bin/peer", "chaincode", "query",
                 "-C", config("CHANNEL_NAME"), "-n", "basic",
-                "-c", json.dumps({"Args": ["GetAsset", str(user_id)]})
+                "-c", json.dumps({"Args": ["ReadAsset", str(user_id)]})
             ]
             result = subprocess.run(
                 command,

@@ -130,6 +130,9 @@ async def verify(
         )
 
         chain_data = NIMCService.get_blockchain_record(user.id)
+        
+        if not chain_data:
+            raise HTTPException(400, "No blockchain record found for this user")
 
         if recalculated_hash != chain_data[0].get("hash"):
             raise HTTPException(400, "Data integrity compromised")
