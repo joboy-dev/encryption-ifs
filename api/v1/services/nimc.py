@@ -153,23 +153,22 @@ class NIMCService:
     @classmethod
     def record_on_blockchain(cls, user_id: str, data_hash: str, cid: str):
         try:
-            # Note: asset-transfer-basic usually expects strings for all args
-            args = {"Args": ["CreateAsset", user_id, "blue", "10", "admin", data_hash]} 
-            # Check your specific chaincode args! The default 'basic' uses:
-            # ID, Color, Size, Owner, AppraisedValue. 
-            # If you wrote custom chaincode, use your args.
+            orderer_ca = f"{FABRIC_PATH}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
             
             command = [
                 f"{FABRIC_SAMPLES_PATH}/bin/peer", "chaincode", "invoke",
+                "-o", "localhost:7050",
+                "--tls",
+                "--cafile", orderer_ca,
                 "-C", config("CHANNEL_NAME"), "-n", "basic",
                 "--peerAddresses", "localhost:7051",
                 "--tlsRootCertFiles", f"{FABRIC_PATH}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
-                "-c", json.dumps({"Args": ["CreateAsset", user_id, data_hash, cid]})
+                "-c", json.dumps({"Args": ["CreateAsset", str(user_id), data_hash, cid]})
             ]
             
             result = subprocess.run(
                 command, 
-                env=cls._get_fabric_env(), # PASS THE ENV HERE
+                env=cls._get_fabric_env(),
                 capture_output=True, 
                 text=True, 
                 timeout=30
@@ -193,11 +192,17 @@ class NIMCService:
         """
         try:
             command = [
-                f"{FABRIC_PATH}/bin/peer", "chaincode", "query",
+                f"{FABRIC_SAMPLES_PATH}/bin/peer", "chaincode", "query",
                 "-C", config("CHANNEL_NAME"), "-n", "basic",
-                "-c", json.dumps({"Args": ["GetAsset", user_id]})
+                "-c", json.dumps({"Args": ["GetAsset", str(user_id)]})
             ]
-            result = subprocess.run(command, capture_output=True, text=True, timeout=30)
+            result = subprocess.run(
+                command,
+                env=cls._get_fabric_env(),
+                capture_output=True, 
+                text=True, 
+                timeout=30
+            )
             if result.returncode == 0:
                 output = json.loads(result.stdout)
                 print(output)
