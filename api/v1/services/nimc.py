@@ -176,6 +176,8 @@ class NIMCService:
                 timeout=30
             )
             
+            print('user_id', user_id)
+            
             if result.returncode == 0:
                 print(result.stdout)
                 return {"status": "success", "tx_id": "captured_from_stdout"}
@@ -193,6 +195,8 @@ class NIMCService:
         Queries the ledger to get the original hash for comparison.
         """
         try:
+            print('user_id', user_id)
+            
             command = [
                 f"{FABRIC_SAMPLES_PATH}/bin/peer", "chaincode", "query",
                 "-C", config("CHANNEL_NAME"), "-n", "basic",
