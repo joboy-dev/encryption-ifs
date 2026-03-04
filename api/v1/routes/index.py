@@ -70,7 +70,12 @@ async def encrypt(
         )
         
         # Blockchain
-        blockchain_res = NIMCService.record_on_blockchain(user.id, data_hash, cid)
+        blockchain_res = NIMCService.record_on_blockchain(
+            user_id=user.id, 
+            data_hash=data_hash, 
+            cid=cid,
+            email=payload.get('email'),
+        )
         
         if blockchain_res and blockchain_res.get("status") == "success":
             pass

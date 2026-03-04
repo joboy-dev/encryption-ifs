@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
@@ -151,7 +153,7 @@ class NIMCService:
     #         return None
     
     @classmethod
-    def record_on_blockchain(cls, user_id: str, data_hash: str, cid: str):
+    def record_on_blockchain(cls, user_id: str, data_hash: str, cid: str, email: str):
         try:
             orderer_ca = f"{FABRIC_PATH}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
             
@@ -163,7 +165,7 @@ class NIMCService:
                 "-C", config("CHANNEL_NAME"), "-n", "basic",
                 "--peerAddresses", "localhost:7051",
                 "--tlsRootCertFiles", f"{FABRIC_PATH}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
-                "-c", json.dumps({"Args": ["CreateAsset", str(user_id), data_hash, cid]})
+                "-c", json.dumps({"Args": ["CreateAsset", str(user_id), data_hash, cid, email, datetime.now().isoformat()]})
             ]
             
             result = subprocess.run(
