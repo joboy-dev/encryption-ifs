@@ -180,6 +180,7 @@ class NIMCService:
             
             if result.returncode == 0:
                 print(result.stdout)
+                print('successfully recorded on blockchain')
                 return {"status": "success", "tx_id": "captured_from_stdout"}
             else:
                 print(f"Blockchain Error: {result.stderr}")
