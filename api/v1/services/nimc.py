@@ -165,7 +165,7 @@ class NIMCService:
                 "-C", config("CHANNEL_NAME"), "-n", "basic",
                 "--peerAddresses", "localhost:7051",
                 "--tlsRootCertFiles", f"{FABRIC_PATH}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
-                "-c", json.dumps({"Args": ["CreateAsset", str(user_id), data_hash, cid, email, datetime.now().isoformat()]})
+                "-c", json.dumps({"Args": ["CreateAsset", str(user_id), data_hash, '10', cid, str(int(datetime.now().timestamp()))]})
             ]
             
             result = subprocess.run(
