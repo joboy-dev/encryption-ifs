@@ -165,6 +165,9 @@ class NIMCService:
                 "-C", config("CHANNEL_NAME"), "-n", "basic",
                 "--peerAddresses", "localhost:7051",
                 "--tlsRootCertFiles", f"{FABRIC_PATH}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
+                "--peerAddresses", "localhost:9051",
+                "--tlsRootCertFiles", f"{FABRIC_PATH}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt",
+                "--waitForEvent",
                 "-c", json.dumps({"Args": ["CreateAsset", str(user_id), data_hash, '10', cid, str(int(datetime.now().timestamp()))]})
             ]
             
@@ -179,7 +182,7 @@ class NIMCService:
             print('user_id', user_id)
             
             if result.returncode == 0:
-                print(result.stdout)
+                print(result.stderr)
                 print('successfully recorded on blockchain')
                 return {"status": "success", "tx_id": "captured_from_stdout"}
             else:
@@ -198,17 +201,17 @@ class NIMCService:
         try:
             print('user_id', user_id)
             
-            # command = [
-            #     f"{FABRIC_SAMPLES_PATH}/bin/peer", "chaincode", "query",
-            #     "-C", config("CHANNEL_NAME"), "-n", "basic",
-            #     "-c", json.dumps({"Args": ["ReadAsset", str(user_id)]})
-            # ]
-            
             command = [
                 f"{FABRIC_SAMPLES_PATH}/bin/peer", "chaincode", "query",
                 "-C", config("CHANNEL_NAME"), "-n", "basic",
-                "-c", '{"Args":["GetAllAssets"]}' 
+                "-c", json.dumps({"Args": ["ReadAsset", str(user_id)]})
             ]
+            
+            # command = [
+            #     f"{FABRIC_SAMPLES_PATH}/bin/peer", "chaincode", "query",
+            #     "-C", config("CHANNEL_NAME"), "-n", "basic",
+            #     "-c", '{"Args":["GetAllAssets"]}' 
+            # ]
             result = subprocess.run(
                 command,
                 env=cls._get_fabric_env(),
@@ -218,9 +221,25 @@ class NIMCService:
             )
             if result.returncode == 0:
                 print(result.stdout)
-                output = json.loads(result.stdout)
-                print(output)
-                return output
+                try:
+                    output = json.loads(result.stdout)
+                    print(output)
+                    return output
+                except json.JSONDecodeError:
+                    print(f"Raw Output (Not JSON): {result.stdout}")
+                    return None
+                
+            #     if not result.stdout.strip():
+            #         print("Query returned success, but the ledger is empty.")
+            #         return []
+                
+            #     try:
+            #         output = json.loads(result.stdout)
+            #         print(f"Ledger Content: {output}")
+            #         return output
+            #     except json.JSONDecodeError:
+            #         print(f"Raw Output (Not JSON): {result.stdout}")
+            #         return result.stdout
             else:
                 print(f"Query Error: {result.stderr}")
                 return None
