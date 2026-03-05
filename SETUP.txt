@@ -93,3 +93,10 @@ docker network prune -f
 sudo rm -rf organizations/peerOrganizations
 sudo rm -rf organizations/ordererOrganizations
 sudo rm -rf channel-artifacts
+
+
+Sample response from blockchain chaincode
+│{'AppraisedValue': 1772753383, 'Color': '771d25ee29952b5bada85│
+                                                               │                                                              │c4d03190772b3fa8587dd7b9127c676d24712e8d092', 'ID': '9cc22b807│
+                                                               │                                                              │7774bcebc64e1c6e6838a78', 'Owner': 'QmeM2NiKLr9PZYL13XGDWgUb3y│
+                                                               │                                                              │DPgeAovDFTaPtR6fSyFw', 'Size': 10} 

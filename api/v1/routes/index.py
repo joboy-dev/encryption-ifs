@@ -124,6 +124,8 @@ async def verify(
             json.dumps(encrypted, sort_keys=True).encode()
         ).hexdigest()
         
+        print('recalculated_hash', recalculated_hash)
+        
         user = User.fetch_one_by_field(
             db=db, error_message="Record with this cid does not exist",
             cid=payload.get('cid')
@@ -134,7 +136,7 @@ async def verify(
         if not chain_data:
             raise HTTPException(400, "No blockchain record found for this user")
 
-        if recalculated_hash != chain_data[0].get("hash"):
+        if recalculated_hash != chain_data.get("Color"):
             raise HTTPException(400, "Data integrity compromised")
 
         decrypted = NIMCService.decrypt(encrypted)
