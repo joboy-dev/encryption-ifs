@@ -168,7 +168,7 @@ class NIMCService:
                 "--peerAddresses", "localhost:9051",
                 "--tlsRootCertFiles", f"{FABRIC_PATH}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt",
                 "--waitForEvent",
-                "-c", json.dumps({"Args": ["CreateAsset", str(user_id), data_hash, '10', cid, str(int(datetime.now().timestamp()))]})  # ID, Color, Size, Owner, AppraisedValue
+                "-c", json.dumps({"Args": ["CreateAsset", str(user_id), data_hash, '10', cid, str(int(datetime.now().timestamp()))]})  # ID(str), Color(str), Size(int), Owner(str), AppraisedValue(int)
             ]
             
             result = subprocess.run(
@@ -207,11 +207,6 @@ class NIMCService:
                 "-c", json.dumps({"Args": ["ReadAsset", str(user_id)]})
             ]
             
-            # command = [
-            #     f"{FABRIC_SAMPLES_PATH}/bin/peer", "chaincode", "query",
-            #     "-C", config("CHANNEL_NAME"), "-n", "basic",
-            #     "-c", '{"Args":["GetAllAssets"]}' 
-            # ]
             result = subprocess.run(
                 command,
                 env=cls._get_fabric_env(),
