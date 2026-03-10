@@ -1,127 +1,127 @@
 ================================================================================
-  BLOCKCHAIN CONNECTION ERROR — DIAGNOSIS & FIX
-  Error: "orderer client failed to connect to orderer.example.com:7050:
-          failed to create new connection: context deadline exceeded"
+FIX: TLS Handshake Failure — x509: ECDSA verification failure
 ================================================================================
 
-ROOT CAUSE
-----------
-The peer CLI successfully discovers the orderer endpoint from the channel config
-(orderer.example.com:7050), but fails to establish a TCP/TLS connection to it.
-This is caused by TWO issues working together:
+ERROR:
+  tls: failed to verify certificate: x509: certificate signed by unknown
+  authority (possibly because of "x509: ECDSA verification failure" while
+  trying to verify candidate authority certificate "ca.org1.example.com")
 
-  1. CODE BUG (FIXED): The `record_on_blockchain` invoke command was missing
-     the `-o localhost:7050 --tls --cafile <orderer-tls-ca>` flags. Without
-     these, the peer CLI tries to connect to the orderer hostname from the
-     channel config ("orderer.example.com:7050") instead of "localhost:7050".
-     Since the DNS name "orderer.example.com" typically only resolves inside
-     the Docker network, it times out from the host machine.
+ROOT CAUSE:
+  The peer's TLS certificate does not match the CA certificate your client is
+  presenting as the trust root. This almost always means the crypto material
+  is stale or the paths point to the wrong files.
 
-  2. CODE BUG (FIXED): The `get_blockchain_record` function was using the
-     wrong binary path (`FABRIC_PATH/bin/peer` instead of
-     `FABRIC_SAMPLES_PATH/bin/peer`) and was missing the `env=` argument
-     in subprocess.run(), so it wouldn't pick up TLS certs or MSP identity.
+--------------------------------------------------------------------------------
+STEP 1 — Check for a double "test-network" in your paths
+--------------------------------------------------------------------------------
 
-WHAT WAS FIXED IN CODE
------------------------
-  - record_on_blockchain: Added `-o localhost:7050 --tls --cafile <orderer-ca>`
-    so the peer CLI connects to the orderer via localhost (port-forwarded from
-    Docker) rather than trying the unresolvable Docker hostname.
+In nimc.py you have:
 
-  - get_blockchain_record: Fixed binary path from FABRIC_PATH to
-    FABRIC_SAMPLES_PATH, and added `env=cls._get_fabric_env()` so it picks up
-    MSP identity, TLS certs, and peer address.
+    FABRIC_SAMPLES_PATH = config("FABRIC_PATH", default="..../test-network")
+    FABRIC_PATH = f"{FABRIC_SAMPLES_PATH}/test-network"
 
-  - Both functions: Cast user_id to str() to prevent type errors if an integer
-    ID is passed from the database model.
+If your FABRIC_PATH env var is already set to something like:
+    /Users/you/fabric-samples/test-network
 
+then FABRIC_PATH becomes:
+    /Users/you/fabric-samples/test-network/test-network   <-- WRONG
 
-IF THE ERROR PERSISTS — INFRASTRUCTURE CHECKS
-----------------------------------------------
-If you still see "context deadline exceeded" after the code fix, the issue is
-that the Fabric network itself is not reachable. Run through these checks:
+Fix: make sure your .env FABRIC_PATH points to the fabric-samples root
+(NOT the test-network subdirectory), e.g.:
 
-1. VERIFY THE FABRIC NETWORK IS RUNNING
-   ─────────────────────────────────────
-   cd /home/korede/fabric-samples/test-network
-   docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+    FABRIC_PATH=/Users/you/fabric-samples
 
-   You MUST see these containers running:
-     - orderer.example.com          (port 7050)
-     - peer0.org1.example.com       (port 7051)
-     - peer0.org2.example.com       (port 9051)
+OR change the code so the paths are consistent.
 
-   If they are not running, bring up the network:
-     ./network.sh up createChannel -c mychannel2 -ca
+--------------------------------------------------------------------------------
+STEP 2 — Regenerate the crypto material
+--------------------------------------------------------------------------------
 
-   If the network was torn down, you also need to redeploy chaincode:
-     ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go -c mychannel2
+The most common cause is that the network was brought down and back up,
+which regenerates all certificates, but old containers or cached certs remain.
 
+    cd <fabric-samples>/test-network
 
-2. VERIFY ORDERER PORT IS ACCESSIBLE ON LOCALHOST
-   ───────────────────────────────────────────────
-   curl -v telnet://localhost:7050 2>&1 | head -5
+    # Tear everything down (removes old crypto + containers)
+    ./network.sh down
 
-   Or:
-     nc -zv localhost 7050
+    # Bring the network back up with a fresh CA
+    ./network.sh up createChannel -ca
 
-   If the port is not open, the orderer container may have stopped or its
-   port mapping is wrong. Check:
-     docker logs orderer.example.com --tail 50
+    # Re-deploy chaincode
+    ./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go \
+        -ccl go
 
+After this, the certificates under organizations/ are freshly generated and
+will match the running peers.
 
-3. VERIFY PEER PORT IS ACCESSIBLE
-   ───────────────────────────────
-   nc -zv localhost 7051
+--------------------------------------------------------------------------------
+STEP 3 — Verify the certificate files actually exist
+--------------------------------------------------------------------------------
 
-   If this fails, the peer container is down.
+Run these checks (replace the path prefix with your actual FABRIC_PATH):
 
+    # Peer TLS CA cert
+    ls -la /home/korede/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
 
-4. VERIFY THE CHANNEL EXISTS
-   ─────────────────────────
-   export FABRIC_CFG_PATH=/home/korede/fabric-samples/config/
-   /home/korede/fabric-samples/bin/peer channel list
+    # Orderer TLS CA cert
+    ls -la /home/korede/fabric-samples/test-network/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 
-   Confirm "mychannel2" appears in the list. If not, the channel was never
-   created or the network was reset.
+    # Admin MSP
+    ls -la /home/korede/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
 
+If any of these are missing, go back to Step 2.
 
-5. VERIFY CHAINCODE IS DEPLOYED
-   ─────────────────────────────
-   /home/korede/fabric-samples/bin/peer lifecycle chaincode queryinstalled
+--------------------------------------------------------------------------------
+STEP 4 — Confirm the cert matches the running peer
+--------------------------------------------------------------------------------
 
-   Confirm that "basic" chaincode is installed and committed.
+    # Grab the certificate the peer is actually serving:
+    openssl s_client -connect localhost:7051 -showcerts </dev/null 2>/dev/null \
+        | openssl x509 -noout -issuer -subject
 
+    # Compare with what your CA cert says:
+    openssl x509 -in <test-network>/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt \
+        -noout -issuer -subject
 
-6. CHECK TLS CERTIFICATE FILES EXIST
-   ──────────────────────────────────
-   ls -la /home/korede/fabric-samples/test-network/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
-   ls -la /home/korede/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
-   ls -la /home/korede/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/
+The "issuer" of the peer cert must match the "subject" of the CA cert.
+If they don't match, the crypto material is out of sync — repeat Step 2.
 
-   If any of these are missing, the crypto material was deleted. You need to
-   bring the network down and back up:
-     ./network.sh down
-     ./network.sh up createChannel -c mychannel2 -ca
+--------------------------------------------------------------------------------
+STEP 5 — Make sure no old Docker volumes linger
+--------------------------------------------------------------------------------
 
+    docker volume ls                 # look for anything with "net_" prefix
+    docker volume prune -f           # remove unused volumes
 
-7. QUICK SMOKE TEST
-   ─────────────────
-   Run a manual query from the command line to isolate whether it's a code
-   issue or an infrastructure issue:
+Old volumes can keep stale ledger data AND old certs inside the peer
+containers even after ./network.sh down.
 
-   export FABRIC_CFG_PATH=/home/korede/fabric-samples/config/
-   export CORE_PEER_TLS_ENABLED=true
-   export CORE_PEER_LOCALMSPID="Org1MSP"
-   export CORE_PEER_MSPCONFIGPATH=/home/korede/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
-   export CORE_PEER_TLS_ROOTCERT_FILE=/home/korede/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
-   export CORE_PEER_ADDRESS=localhost:7051
+--------------------------------------------------------------------------------
+STEP 6 (optional) — Quick sanity test with peer CLI directly
+--------------------------------------------------------------------------------
 
-   /home/korede/fabric-samples/bin/peer chaincode query \
-     -C mychannel2 -n basic \
-     -c '{"Args":["GetAllAssets"]}'
+    export FABRIC_CFG_PATH=<fabric-samples>/config/
+    export CORE_PEER_TLS_ENABLED=true
+    export CORE_PEER_LOCALMSPID=Org1MSP
+    export CORE_PEER_TLS_ROOTCERT_FILE=<test-network>/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+    export CORE_PEER_MSPCONFIGPATH=<test-network>/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+    export CORE_PEER_ADDRESS=localhost:7051
 
-   If this succeeds → the network is fine and the code fix should resolve it.
-   If this fails   → the Fabric network needs to be restarted/redeployed.
+    peer channel list
 
+If this also fails with the same TLS error, the issue is purely with the
+certificates/network — not your Python code.
+
+================================================================================
+SUMMARY — most likely fix
+================================================================================
+
+1. ./network.sh down
+2. docker volume prune -f
+3. ./network.sh up createChannel -ca
+4. Re-deploy your chaincode
+5. Verify .env FABRIC_PATH does NOT already include "test-network"
+   (to avoid the double test-network/test-network path bug in nimc.py)
 ================================================================================

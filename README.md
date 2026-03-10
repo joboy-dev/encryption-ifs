@@ -415,10 +415,10 @@ sudo rm -rf organizations/ordererOrganizations
 sudo rm -rf channel-artifacts
 
 # Bring the network back up
-./network.sh up createChannel -c mychannel -ca
+./network.sh up createChannel -c mychannel4 -ca
 
 # Redeploy chaincode (required after a full teardown)
-./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go -c mychannel
+./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go -c mychannel4
 ```
 
 > **Important:** After tearing down the network, all ledger data is lost. You must redeploy the chaincode and any previously recorded assets will no longer exist.

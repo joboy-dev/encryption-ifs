@@ -70,19 +70,19 @@ async def encrypt(
         )
         
         # Blockchain
-        blockchain_res = NIMCService.record_on_blockchain(
-            user_id=user.id, 
-            data_hash=data_hash, 
-            cid=cid,
-            email=payload.get('email'),
-        )
+        # blockchain_res = NIMCService.record_on_blockchain(
+        #     user_id=user.id, 
+        #     data_hash=data_hash, 
+        #     cid=cid,
+        #     email=payload.get('email'),
+        # )
         
-        if blockchain_res and blockchain_res.get("status") == "success":
-            pass
-        else:
-            db.rollback()  # Undo the user creation since blockchain recording failed
-            logger.warning(f"Blockchain recording failed for user {user.id}")
-            raise HTTPException(400, "Failed to record on blockchain")
+        # if blockchain_res and blockchain_res.get("status") == "success":
+        #     pass
+        # else:
+        #     db.rollback()  # Undo the user creation since blockchain recording failed
+        #     logger.warning(f"Blockchain recording failed for user {user.id}")
+        #     raise HTTPException(400, "Failed to record on blockchain")
             
         print({
             "cid": cid,
@@ -131,13 +131,13 @@ async def verify(
             cid=payload.get('cid')
         )
 
-        chain_data = NIMCService.get_blockchain_record(user.id)
+        # chain_data = NIMCService.get_blockchain_record(user.id)
         
-        if not chain_data:
-            raise HTTPException(400, "No blockchain record found for this user")
+        # if not chain_data:
+        #     raise HTTPException(400, "No blockchain record found for this user")
 
-        if recalculated_hash != chain_data.get("Color"):
-            raise HTTPException(400, "Data integrity compromised")
+        # if recalculated_hash != chain_data.get("Color"):
+        #     raise HTTPException(400, "Data integrity compromised")
 
         decrypted = NIMCService.decrypt(encrypted)
         print('decrypted', decrypted)
